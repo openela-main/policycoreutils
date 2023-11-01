@@ -1,0 +1,49 @@
+From 04b632e6de14ec0336e14988bf4c2bd581f7308e Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Tue, 5 Mar 2019 17:25:00 +0100
+Subject: [PATCH] gui: Install .desktop files to /usr/share/applications by
+ default
+
+/usr/share/applications is a standard directory for .desktop files.
+Installation path can be changed using DESKTOPDIR variable in installation
+phase, e.g.
+
+make DESKTOPDIR=/usr/local/share/applications install
+
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+---
+ gui/Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/gui/Makefile b/gui/Makefile
+index b2375fbf..ca965c94 100644
+--- a/gui/Makefile
++++ b/gui/Makefile
+@@ -5,6 +5,7 @@ BINDIR ?= $(PREFIX)/bin
+ SHAREDIR ?= $(PREFIX)/share/system-config-selinux
+ DATADIR ?= $(PREFIX)/share
+ MANDIR ?= $(PREFIX)/share/man
++DESKTOPDIR ?= $(PREFIX)/share/applications
+ 
+ TARGETS= \
+ booleansPage.py \
+@@ -29,6 +30,7 @@ install: all
+ 	-mkdir -p $(DESTDIR)$(DATADIR)/pixmaps
+ 	-mkdir -p $(DESTDIR)$(DATADIR)/icons/hicolor/24x24/apps
+ 	-mkdir -p $(DESTDIR)$(DATADIR)/polkit-1/actions/
++	-mkdir -p $(DESTDIR)$(DESKTOPDIR)
+ 	install -m 755 system-config-selinux.py $(DESTDIR)$(SHAREDIR)
+ 	install -m 755 system-config-selinux $(DESTDIR)$(BINDIR)
+ 	install -m 755 polgengui.py $(DESTDIR)$(BINDIR)/selinux-polgengui
+@@ -44,7 +46,7 @@ install: all
+ 	install -m 644 system-config-selinux.png $(DESTDIR)$(DATADIR)/pixmaps
+ 	install -m 644 system-config-selinux.png $(DESTDIR)$(DATADIR)/icons/hicolor/24x24/apps
+ 	install -m 644 system-config-selinux.png $(DESTDIR)$(DATADIR)/system-config-selinux
+-	install -m 644 *.desktop $(DESTDIR)$(DATADIR)/system-config-selinux
++	install -m 644 *.desktop $(DESTDIR)$(DESKTOPDIR)
+ 	-mkdir -p $(DESTDIR)$(DATADIR)/pixmaps
+ 	install -m 644 sepolicy_256.png $(DESTDIR)$(DATADIR)/pixmaps/sepolicy.png
+ 	for i in 16 22 32 48 256; do \
+-- 
+2.21.0
+

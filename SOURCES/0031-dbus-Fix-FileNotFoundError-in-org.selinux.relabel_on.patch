@@ -1,0 +1,40 @@
+From 6e5ccf2dd3329b400b70b7806b9c6128c5c50995 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Fri, 15 Nov 2019 09:15:49 +0100
+Subject: [PATCH] dbus: Fix FileNotFoundError in org.selinux.relabel_on_boot
+
+When org.selinux.relabel_on_boot(0) was called twice, it failed with
+FileNotFoundError.
+
+Fixes:
+    $ dbus-send --system --print-reply --dest=org.selinux /org/selinux/object org.selinux.relabel_on_boot int64:1
+    method return sender=:1.53 -> dest=:1.54 reply_serial=2
+    $ dbus-send --system --print-reply --dest=org.selinux /org/selinux/object org.selinux.relabel_on_boot int64:0
+    method return sender=:1.53 -> dest=:1.55 reply_serial=2
+    $ dbus-send --system --print-reply --dest=org.selinux /org/selinux/object org.selinux.relabel_on_boot int64:0
+    Error org.freedesktop.DBus.Python.FileNotFoundError: FileNotFoundError: [Errno 2] No such file or directory: '/.autorelabel'
+
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+---
+ dbus/selinux_server.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/dbus/selinux_server.py b/dbus/selinux_server.py
+index b9debc071485..be4f4557a9fa 100644
+--- a/dbus/selinux_server.py
++++ b/dbus/selinux_server.py
+@@ -85,7 +85,10 @@ class selinux_server(slip.dbus.service.Object):
+             fd = open("/.autorelabel", "w")
+             fd.close()
+         else:
+-            os.unlink("/.autorelabel")
++            try:
++                os.unlink("/.autorelabel")
++            except FileNotFoundError:
++                pass
+ 
+     def write_selinux_config(self, enforcing=None, policy=None):
+         path = selinux.selinux_path() + "config"
+-- 
+2.23.0
+

@@ -1,0 +1,65 @@
+From f33e40265d192e5d725e7b82e5f14f603e1fba48 Mon Sep 17 00:00:00 2001
+From: James Carter <jwcart2@gmail.com>
+Date: Wed, 19 Oct 2022 14:20:11 -0400
+Subject: [PATCH] python: Do not query the local database if the fcontext is
+ non-local
+
+Vit Mojzis reports that an error message is produced when modifying
+a non-local fcontext.
+
+He gives the following example:
+  # semanage fcontext -f f -m -t passwd_file_t /etc/security/opasswd
+  libsemanage.dbase_llist_query: could not query record value (No such file or directory).
+
+When modifying an fcontext, the non-local database is checked for the
+key and then, if it is not found there, the local database is checked.
+If the key doesn't exist, then an error is raised. If the key exists
+then the local database is queried first and, if that fails, the non-
+local database is queried.
+
+The error is from querying the local database when the fcontext is in
+the non-local database.
+
+Instead, if the fcontext is in the non-local database, just query
+the non-local database. Only query the local database if the
+fcontext was found in it.
+
+Reported-by: Vit Mojzis <vmojzis@redhat.com>
+Signed-off-by: James Carter <jwcart2@gmail.com>
+---
+ python/semanage/seobject.py | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/python/semanage/seobject.py b/python/semanage/seobject.py
+index 70ebfd08..0e923a0d 100644
+--- a/python/semanage/seobject.py
++++ b/python/semanage/seobject.py
+@@ -2490,16 +2490,19 @@ class fcontextRecords(semanageRecords):
+         (rc, exists) = semanage_fcontext_exists(self.sh, k)
+         if rc < 0:
+             raise ValueError(_("Could not check if file context for %s is defined") % target)
+-        if not exists:
++        if exists:
++            try:
++                (rc, fcontext) = semanage_fcontext_query(self.sh, k)
++            except OSError:
++                raise ValueError(_("Could not query file context for %s") % target)
++        else:
+             (rc, exists) = semanage_fcontext_exists_local(self.sh, k)
++            if rc < 0:
++                raise ValueError(_("Could not check if file context for %s is defined") % target)
+             if not exists:
+                 raise ValueError(_("File context for %s is not defined") % target)
+-
+-        try:
+-            (rc, fcontext) = semanage_fcontext_query_local(self.sh, k)
+-        except OSError:
+             try:
+-                (rc, fcontext) = semanage_fcontext_query(self.sh, k)
++                (rc, fcontext) = semanage_fcontext_query_local(self.sh, k)
+             except OSError:
+                 raise ValueError(_("Could not query file context for %s") % target)
+ 
+-- 
+2.37.3
+

@@ -1,0 +1,8 @@
+SOURCES/selinux-gui-2.9.tar.gz
+SOURCES/selinux-python-2.9.tar.gz
+SOURCES/selinux-sandbox-2.9.tar.gz
+SOURCES/semodule-utils-2.9.tar.gz
+SOURCES/policycoreutils-2.9.tar.gz
+SOURCES/restorecond-2.9.tar.gz
+SOURCES/selinux-autorelabel.target
+SOURCES/selinux-dbus-2.9.tar.gz

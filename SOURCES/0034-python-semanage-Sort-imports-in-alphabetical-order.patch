@@ -1,0 +1,41 @@
+From 4b0e627d42f9a8e09dcd064a6ae897f4c2e9cf6c Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Wed, 6 Jan 2021 10:00:07 +0100
+Subject: [PATCH] python/semanage: Sort imports in alphabetical order
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+---
+ python/semanage/semanage | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/python/semanage/semanage b/python/semanage/semanage
+index 1abe3536..781e8645 100644
+--- a/python/semanage/semanage
++++ b/python/semanage/semanage
+@@ -23,10 +23,12 @@
+ #
+ #
+ 
+-import traceback
+ import argparse
+-import sys
+ import os
++import re
++import sys
++import traceback
++
+ PROGNAME = "selinux-python"
+ try:
+     import gettext
+@@ -786,8 +788,6 @@ def setupExportParser(subparsers):
+     exportParser.add_argument('-f', '--output_file', dest='output_file', action=SetExportFile, help=_('Output file'))
+     exportParser.set_defaults(func=handleExport)
+ 
+-import re
+-
+ 
+ def mkargv(line):
+     dquote = "\""
+-- 
+2.29.2
+

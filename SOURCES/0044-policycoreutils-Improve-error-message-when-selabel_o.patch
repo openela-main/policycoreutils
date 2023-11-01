@@ -1,0 +1,41 @@
+From 69da6239d8505a9d6ca547187f71a351df17f157 Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Mon, 10 Jan 2022 18:35:27 +0100
+Subject: [PATCH] policycoreutils: Improve error message when selabel_open
+ fails
+
+When selabel_open fails to locate file_context files and
+selabel_opt_path is not specified (e.g. when the policy type is
+missconfigured in /etc/selinux/config), perror only prints
+"No such file or directory".
+This can be confusing in case of "restorecon" since it's
+not apparent that the issue is in policy store.
+
+Before:
+  \# restorecon -v /tmp/foo.txt
+  No such file or directory
+After:
+  \# restorecon -v /tmp/foo.txt
+  /etc/selinux/yolo/contexts/files/file_contexts: No such file or directory
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+---
+ policycoreutils/setfiles/restore.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/policycoreutils/setfiles/restore.c b/policycoreutils/setfiles/restore.c
+index d3335d1a..ba2668b3 100644
+--- a/policycoreutils/setfiles/restore.c
++++ b/policycoreutils/setfiles/restore.c
+@@ -29,7 +29,7 @@ void restore_init(struct restore_opts *opts)
+ 
+ 	opts->hnd = selabel_open(SELABEL_CTX_FILE, selinux_opts, 3);
+ 	if (!opts->hnd) {
+-		perror(opts->selabel_opt_path);
++		perror(opts->selabel_opt_path ? opts->selabel_opt_path : selinux_file_context_path());
+ 		exit(1);
+ 	}
+ 
+-- 
+2.30.2
+

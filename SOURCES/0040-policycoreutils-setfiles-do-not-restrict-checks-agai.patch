@@ -1,0 +1,69 @@
+From d10e773c014a12b17fefd9caef0bd02528d75d18 Mon Sep 17 00:00:00 2001
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+Date: Tue, 7 Jul 2020 16:35:01 +0200
+Subject: [PATCH] policycoreutils: setfiles: do not restrict checks against a
+ binary policy
+
+The -c option allows to check the validity of contexts against a
+specified binary policy. Its use is restricted: no pathname can be used
+when a binary policy is given to setfiles. It's not clear if this is
+intentional as the built-in help and the man page are not stating the
+same thing about this (the man page document -c as a normal option,
+while the built-in help shows it is restricted).
+
+When generating full system images later used with SELinux in enforcing
+mode, the extended attributed of files have to be set by the build
+machine. The issue is setfiles always checks the contexts against a
+policy (ctx_validate = 1) and using an external binary policy is not
+currently possible when using a pathname. This ends up in setfiles
+failing early as the contexts of the target image are not always
+compatible with the ones of the build machine.
+
+This patch reworks a check on optind only made when -c is used, that
+enforced the use of a single argument to allow 1+ arguments, allowing to
+use setfiles with an external binary policy and pathnames. The following
+command is then allowed, as already documented in the man page:
+
+  $ setfiles -m -r target/ -c policy.32 file_contexts target/
+
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+
+(cherry-picked from SElinuxProject
+ commit: c94e542c98da2f26863c1cbd9d7ad9bc5cca6aff )
+---
+ policycoreutils/setfiles/setfiles.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/policycoreutils/setfiles/setfiles.c b/policycoreutils/setfiles/setfiles.c
+index 82d0aaa7..4fd3d756 100644
+--- a/policycoreutils/setfiles/setfiles.c
++++ b/policycoreutils/setfiles/setfiles.c
+@@ -39,11 +39,10 @@ static __attribute__((__noreturn__)) void usage(const char *const name)
+ 			name, name);
+ 	} else {
+ 		fprintf(stderr,
+-			"usage:  %s [-diIDlmnpqvFW] [-e excludedir] [-r alt_root_path] spec_file pathname...\n"
+-			"usage:  %s [-diIDlmnpqvFW] [-e excludedir] [-r alt_root_path] spec_file -f filename\n"
+-			"usage:  %s -s [-diIDlmnpqvFW] spec_file\n"
+-			"usage:  %s -c policyfile spec_file\n",
+-			name, name, name, name);
++			"usage:  %s [-diIDlmnpqvEFW] [-e excludedir] [-r alt_root_path] [-c policyfile] spec_file pathname...\n"
++			"usage:  %s [-diIDlmnpqvEFW] [-e excludedir] [-r alt_root_path] [-c policyfile] spec_file -f filename\n"
++			"usage:  %s -s [-diIDlmnpqvFW] spec_file\n",
++			name, name, name);
+ 	}
+ 	exit(-1);
+ }
+@@ -376,7 +375,7 @@ int main(int argc, char **argv)
+ 
+ 	if (!iamrestorecon) {
+ 		if (policyfile) {
+-			if (optind != (argc - 1))
++			if (optind > (argc - 1))
+ 				usage(argv[0]);
+ 		} else if (use_input_file) {
+ 			if (optind != (argc - 1)) {
+-- 
+2.30.2
+

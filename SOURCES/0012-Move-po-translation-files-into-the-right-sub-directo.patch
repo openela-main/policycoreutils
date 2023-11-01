@@ -1,0 +1,515 @@
+From 4015e9299bfda622e9d407cdbcc536000688aa8f Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Mon, 6 Aug 2018 13:23:00 +0200
+Subject: [PATCH] Move po/ translation files into the right sub-directories
+
+When policycoreutils was split into policycoreutils/ python/ gui/ and sandbox/
+sub-directories, po/ translation files stayed in policycoreutils/.
+
+This commit split original policycoreutils/po directory into
+policycoreutils/po
+python/po
+gui/po
+sandbox/po
+
+See https://github.com/fedora-selinux/selinux/issues/43
+---
+ gui/Makefile                |  3 ++
+ gui/po/Makefile             | 82 ++++++++++++++++++++++++++++++++++++
+ gui/po/POTFILES             | 17 ++++++++
+ policycoreutils/po/Makefile | 70 ++-----------------------------
+ policycoreutils/po/POTFILES |  9 ++++
+ python/Makefile             |  2 +-
+ python/po/Makefile          | 83 +++++++++++++++++++++++++++++++++++++
+ python/po/POTFILES          | 10 +++++
+ sandbox/Makefile            |  2 +
+ sandbox/po/Makefile         | 82 ++++++++++++++++++++++++++++++++++++
+ sandbox/po/POTFILES         |  1 +
+ 11 files changed, 293 insertions(+), 68 deletions(-)
+ create mode 100644 gui/po/Makefile
+ create mode 100644 gui/po/POTFILES
+ create mode 100644 policycoreutils/po/POTFILES
+ create mode 100644 python/po/Makefile
+ create mode 100644 python/po/POTFILES
+ create mode 100644 sandbox/po/Makefile
+ create mode 100644 sandbox/po/POTFILES
+
+diff --git a/gui/Makefile b/gui/Makefile
+index ca965c94..5a5bf6dc 100644
+--- a/gui/Makefile
++++ b/gui/Makefile
+@@ -22,6 +22,7 @@ system-config-selinux.ui \
+ usersPage.py
+ 
+ all: $(TARGETS) system-config-selinux.py polgengui.py
++	(cd po && $(MAKE) $@)
+ 
+ install: all
+ 	-mkdir -p $(DESTDIR)$(MANDIR)/man8
+@@ -54,6 +55,8 @@ install: all
+ 		install -m 644 sepolicy_$${i}.png $(DESTDIR)$(DATADIR)/icons/hicolor/$${i}x$${i}/apps/sepolicy.png; \
+ 	done
+ 	install -m 644 org.selinux.config.policy $(DESTDIR)$(DATADIR)/polkit-1/actions/
++	(cd po && $(MAKE) $@)
++
+ clean:
+ 
+ indent:
+diff --git a/gui/po/Makefile b/gui/po/Makefile
+new file mode 100644
+index 00000000..a0f5439f
+--- /dev/null
++++ b/gui/po/Makefile
+@@ -0,0 +1,82 @@
++#
++# Makefile for the PO files (translation) catalog
++#
++
++PREFIX ?= /usr
++
++# What is this package?
++NLSPACKAGE	= gui
++POTFILE		= $(NLSPACKAGE).pot
++INSTALL		= /usr/bin/install -c -p
++INSTALL_DATA	= $(INSTALL) -m 644
++INSTALL_DIR	= /usr/bin/install -d
++
++# destination directory
++INSTALL_NLS_DIR = $(PREFIX)/share/locale
++
++# PO catalog handling
++MSGMERGE	= msgmerge
++MSGMERGE_FLAGS	= -q
++XGETTEXT	= xgettext --default-domain=$(NLSPACKAGE)
++MSGFMT		= msgfmt
++
++# All possible linguas
++PO_LINGUAS := $(sort $(patsubst %.po,%,$(wildcard *.po)))
++
++# Only the files matching what the user has set in LINGUAS
++USER_LINGUAS := $(filter $(patsubst %,%%,$(LINGUAS)),$(PO_LINGUAS))
++
++# if no valid LINGUAS, build all languages
++USE_LINGUAS := $(if $(USER_LINGUAS),$(USER_LINGUAS),$(PO_LINGUAS))
++
++POFILES		= $(patsubst %,%.po,$(USE_LINGUAS))
++MOFILES		= $(patsubst %.po,%.mo,$(POFILES))
++POTFILES  = $(shell cat POTFILES)
++
++#default:: clean
++
++all::  $(MOFILES)
++
++$(POTFILE): $(POTFILES)
++	$(XGETTEXT) --keyword=_ --keyword=N_ $(POTFILES)
++	@if cmp -s $(NLSPACKAGE).po $(POTFILE); then \
++	    rm -f $(NLSPACKAGE).po; \
++	else \
++	    mv -f $(NLSPACKAGE).po $(POTFILE); \
++	fi; \
++
++
++refresh-po: Makefile
++	for cat in $(POFILES); do \
++		lang=`basename $$cat .po`; \
++		if $(MSGMERGE) $(MSGMERGE_FLAGS) $$lang.po $(POTFILE) > $$lang.pot ; then \
++			mv -f $$lang.pot $$lang.po ; \
++			echo "$(MSGMERGE) of $$lang succeeded" ; \
++		else \
++			echo "$(MSGMERGE) of $$lang failed" ; \
++			rm -f $$lang.pot ; \
++		fi \
++	done
++
++clean:
++	@rm -fv *mo *~ .depend
++	@rm -rf tmp
++
++install: $(MOFILES)
++	@for n in $(MOFILES); do \
++	    l=`basename $$n .mo`; \
++	    $(INSTALL_DIR) $(DESTDIR)$(INSTALL_NLS_DIR)/$$l/LC_MESSAGES; \
++	    $(INSTALL_DATA) --verbose $$n $(DESTDIR)$(INSTALL_NLS_DIR)/$$l/LC_MESSAGES/selinux-$(NLSPACKAGE).mo; \
++	done
++
++%.mo: %.po
++	$(MSGFMT) -o $@ $<
++report:
++	@for cat in $(wildcard *.po); do \
++                echo -n "$$cat: "; \
++                msgfmt -v --statistics -o /dev/null $$cat; \
++        done
++
++.PHONY: missing depend
++
++relabel:
+diff --git a/gui/po/POTFILES b/gui/po/POTFILES
+new file mode 100644
+index 00000000..1795c5c1
+--- /dev/null
++++ b/gui/po/POTFILES
+@@ -0,0 +1,17 @@
++../booleansPage.py
++../domainsPage.py
++../fcontextPage.py
++../loginsPage.py
++../modulesPage.py
++../org.selinux.config.policy
++../polgengui.py
++../polgen.ui
++../portsPage.py
++../selinux-polgengui.desktop
++../semanagePage.py
++../sepolicy.desktop
++../statusPage.py
++../system-config-selinux.desktop
++../system-config-selinux.py
++../system-config-selinux.ui
++../usersPage.py
+diff --git a/policycoreutils/po/Makefile b/policycoreutils/po/Makefile
+index 575e1431..18bc1dff 100644
+--- a/policycoreutils/po/Makefile
++++ b/policycoreutils/po/Makefile
+@@ -3,7 +3,6 @@
+ #
+ 
+ PREFIX ?= /usr
+-TOP	 = ../..
+ 
+ # What is this package?
+ NLSPACKAGE	= policycoreutils
+@@ -32,74 +31,13 @@ USE_LINGUAS := $(if $(USER_LINGUAS),$(USER_LINGUAS),$(PO_LINGUAS))
+ 
+ POFILES		= $(patsubst %,%.po,$(USE_LINGUAS))
+ MOFILES		= $(patsubst %.po,%.mo,$(POFILES))
+-POTFILES = \
+-	../run_init/open_init_pty.c \
+-	../run_init/run_init.c \
+-	../semodule_link/semodule_link.c \
+-	../audit2allow/audit2allow \
+-	../semanage/seobject.py \
+-	../setsebool/setsebool.c \
+-	../newrole/newrole.c \
+-	../load_policy/load_policy.c \
+-	../sestatus/sestatus.c \
+-	../semodule/semodule.c \
+-	../setfiles/setfiles.c \
+-	../semodule_package/semodule_package.c \
+-	../semodule_deps/semodule_deps.c \
+-	../semodule_expand/semodule_expand.c \
+-	../scripts/chcat \
+-	../scripts/fixfiles \
+-	../restorecond/stringslist.c \
+-	../restorecond/restorecond.h \
+-	../restorecond/utmpwatcher.h \
+-	../restorecond/stringslist.h \
+-	../restorecond/restorecond.c \
+-	../restorecond/utmpwatcher.c \
+-	../gui/booleansPage.py \
+-	../gui/fcontextPage.py \
+-	../gui/loginsPage.py \
+-	../gui/mappingsPage.py \
+-	../gui/modulesPage.py \
+-	../gui/polgen.glade \
+-	../gui/polgengui.py \
+-	../gui/portsPage.py \
+-	../gui/semanagePage.py \
+-	../gui/statusPage.py \
+-	../gui/system-config-selinux.glade \
+-	../gui/system-config-selinux.py \
+-	../gui/usersPage.py \
+-	../secon/secon.c \
+-	booleans.py \
+-	../sepolicy/sepolicy.py \
+-	../sepolicy/sepolicy/communicate.py \
+-	../sepolicy/sepolicy/__init__.py \
+-	../sepolicy/sepolicy/network.py \
+-	../sepolicy/sepolicy/generate.py \
+-	../sepolicy/sepolicy/sepolicy.glade \
+-	../sepolicy/sepolicy/gui.py \
+-	../sepolicy/sepolicy/manpage.py \
+-	../sepolicy/sepolicy/transition.py \
+-	../sepolicy/sepolicy/templates/executable.py \
+-	../sepolicy/sepolicy/templates/__init__.py \
+-	../sepolicy/sepolicy/templates/network.py \
+-	../sepolicy/sepolicy/templates/rw.py \
+-	../sepolicy/sepolicy/templates/script.py \
+-	../sepolicy/sepolicy/templates/semodule.py \
+-	../sepolicy/sepolicy/templates/tmp.py \
+-	../sepolicy/sepolicy/templates/user.py \
+-	../sepolicy/sepolicy/templates/var_lib.py \
+-	../sepolicy/sepolicy/templates/var_log.py \
+-	../sepolicy/sepolicy/templates/var_run.py \
+-	../sepolicy/sepolicy/templates/var_spool.py
++POTFILES  = $(shell cat POTFILES)
+ 
+ #default:: clean
+ 
+-all::  $(MOFILES)
++all:: $(POTFILE) $(MOFILES)
+ 
+-booleans.py:
+-	sepolicy booleans -a > booleans.py
+-
+-$(POTFILE): $(POTFILES) booleans.py
++$(POTFILE): $(POTFILES)
+ 	$(XGETTEXT) --keyword=_ --keyword=N_ $(POTFILES)
+ 	@if cmp -s $(NLSPACKAGE).po $(POTFILE); then \
+ 	    rm -f $(NLSPACKAGE).po; \
+@@ -107,8 +45,6 @@ $(POTFILE): $(POTFILES) booleans.py
+ 	    mv -f $(NLSPACKAGE).po $(POTFILE); \
+ 	fi; \
+ 
+-update-po: Makefile $(POTFILE) refresh-po
+-	@rm -f booleans.py
+ 
+ refresh-po: Makefile
+ 	for cat in $(POFILES); do \
+diff --git a/policycoreutils/po/POTFILES b/policycoreutils/po/POTFILES
+new file mode 100644
+index 00000000..12237dc6
+--- /dev/null
++++ b/policycoreutils/po/POTFILES
+@@ -0,0 +1,9 @@
++../run_init/open_init_pty.c
++../run_init/run_init.c
++../setsebool/setsebool.c
++../newrole/newrole.c
++../load_policy/load_policy.c
++../sestatus/sestatus.c
++../semodule/semodule.c
++../setfiles/setfiles.c
++../secon/secon.c
+diff --git a/python/Makefile b/python/Makefile
+index 9b66d52f..00312dbd 100644
+--- a/python/Makefile
++++ b/python/Makefile
+@@ -1,4 +1,4 @@
+-SUBDIRS = sepolicy audit2allow semanage sepolgen chcat
++SUBDIRS = sepolicy audit2allow semanage sepolgen chcat po
+ 
+ all install relabel clean indent test:
+ 	@for subdir in $(SUBDIRS); do \
+diff --git a/python/po/Makefile b/python/po/Makefile
+new file mode 100644
+index 00000000..4e052d5a
+--- /dev/null
++++ b/python/po/Makefile
+@@ -0,0 +1,83 @@
++#
++# Makefile for the PO files (translation) catalog
++#
++
++PREFIX ?= /usr
++
++# What is this package?
++NLSPACKAGE	= python
++POTFILE		= $(NLSPACKAGE).pot
++INSTALL		= /usr/bin/install -c -p
++INSTALL_DATA	= $(INSTALL) -m 644
++INSTALL_DIR	= /usr/bin/install -d
++
++# destination directory
++INSTALL_NLS_DIR = $(PREFIX)/share/locale
++
++# PO catalog handling
++MSGMERGE	= msgmerge
++MSGMERGE_FLAGS	= -q
++XGETTEXT	= xgettext --default-domain=$(NLSPACKAGE)
++MSGFMT		= msgfmt
++
++# All possible linguas
++PO_LINGUAS := $(sort $(patsubst %.po,%,$(wildcard *.po)))
++
++# Only the files matching what the user has set in LINGUAS
++USER_LINGUAS := $(filter $(patsubst %,%%,$(LINGUAS)),$(PO_LINGUAS))
++
++# if no valid LINGUAS, build all languages
++USE_LINGUAS := $(if $(USER_LINGUAS),$(USER_LINGUAS),$(PO_LINGUAS))
++
++POFILES		= $(patsubst %,%.po,$(USE_LINGUAS))
++MOFILES		= $(patsubst %.po,%.mo,$(POFILES))
++POTFILES  = $(shell cat POTFILES)
++
++#default:: clean
++
++all::  $(MOFILES)
++
++$(POTFILE): $(POTFILES) 
++	$(XGETTEXT) -L Python --keyword=_ --keyword=N_ $(POTFILES)
++	$(XGETTEXT) -j --keyword=_ --keyword=N_ ../sepolicy/sepolicy/sepolicy.glade
++	@if cmp -s $(NLSPACKAGE).po $(POTFILE); then \
++	    rm -f $(NLSPACKAGE).po; \
++	else \
++	    mv -f $(NLSPACKAGE).po $(POTFILE); \
++	fi; \
++
++
++refresh-po: Makefile
++	for cat in $(POFILES); do \
++		lang=`basename $$cat .po`; \
++		if $(MSGMERGE) $(MSGMERGE_FLAGS) $$lang.po $(POTFILE) > $$lang.pot ; then \
++			mv -f $$lang.pot $$lang.po ; \
++			echo "$(MSGMERGE) of $$lang succeeded" ; \
++		else \
++			echo "$(MSGMERGE) of $$lang failed" ; \
++			rm -f $$lang.pot ; \
++		fi \
++	done
++
++clean:
++	@rm -fv *mo *~ .depend
++	@rm -rf tmp
++
++install: $(MOFILES)
++	@for n in $(MOFILES); do \
++	    l=`basename $$n .mo`; \
++	    $(INSTALL_DIR) $(DESTDIR)$(INSTALL_NLS_DIR)/$$l/LC_MESSAGES; \
++	    $(INSTALL_DATA) --verbose $$n $(DESTDIR)$(INSTALL_NLS_DIR)/$$l/LC_MESSAGES/selinux-$(NLSPACKAGE).mo; \
++	done
++
++%.mo: %.po
++	$(MSGFMT) -o $@ $<
++report:
++	@for cat in $(wildcard *.po); do \
++                echo -n "$$cat: "; \
++                msgfmt -v --statistics -o /dev/null $$cat; \
++        done
++
++.PHONY: missing depend
++
++relabel:
+diff --git a/python/po/POTFILES b/python/po/POTFILES
+new file mode 100644
+index 00000000..128eb870
+--- /dev/null
++++ b/python/po/POTFILES
+@@ -0,0 +1,10 @@
++../audit2allow/audit2allow
++../chcat/chcat
++../semanage/semanage
++../semanage/seobject.py
++../sepolgen/src/sepolgen/interfaces.py
++../sepolicy/sepolicy/generate.py
++../sepolicy/sepolicy/gui.py
++../sepolicy/sepolicy/__init__.py
++../sepolicy/sepolicy/interface.py
++../sepolicy/sepolicy.py
+diff --git a/sandbox/Makefile b/sandbox/Makefile
+index 9da5e58d..b817824e 100644
+--- a/sandbox/Makefile
++++ b/sandbox/Makefile
+@@ -13,6 +13,7 @@ override LDLIBS += -lselinux -lcap-ng
+ SEUNSHARE_OBJS = seunshare.o
+ 
+ all: sandbox seunshare sandboxX.sh start
++	(cd po && $(MAKE) $@)
+ 
+ seunshare: $(SEUNSHARE_OBJS)
+ 
+@@ -39,6 +40,7 @@ install: all
+ 	install -m 755 start $(DESTDIR)$(SHAREDIR)
+ 	-mkdir -p $(DESTDIR)$(SYSCONFDIR)
+ 	install -m 644 sandbox.conf $(DESTDIR)$(SYSCONFDIR)/sandbox
++	(cd po && $(MAKE) $@)
+ 
+ test:
+ 	@$(PYTHON) test_sandbox.py -v
+diff --git a/sandbox/po/Makefile b/sandbox/po/Makefile
+new file mode 100644
+index 00000000..0556bbe9
+--- /dev/null
++++ b/sandbox/po/Makefile
+@@ -0,0 +1,82 @@
++#
++# Makefile for the PO files (translation) catalog
++#
++
++PREFIX ?= /usr
++
++# What is this package?
++NLSPACKAGE	= sandbox
++POTFILE		= $(NLSPACKAGE).pot
++INSTALL		= /usr/bin/install -c -p
++INSTALL_DATA	= $(INSTALL) -m 644
++INSTALL_DIR	= /usr/bin/install -d
++
++# destination directory
++INSTALL_NLS_DIR = $(PREFIX)/share/locale
++
++# PO catalog handling
++MSGMERGE	= msgmerge
++MSGMERGE_FLAGS	= -q
++XGETTEXT	= xgettext -L Python --default-domain=$(NLSPACKAGE)
++MSGFMT		= msgfmt
++
++# All possible linguas
++PO_LINGUAS := $(sort $(patsubst %.po,%,$(wildcard *.po)))
++
++# Only the files matching what the user has set in LINGUAS
++USER_LINGUAS := $(filter $(patsubst %,%%,$(LINGUAS)),$(PO_LINGUAS))
++
++# if no valid LINGUAS, build all languages
++USE_LINGUAS := $(if $(USER_LINGUAS),$(USER_LINGUAS),$(PO_LINGUAS))
++
++POFILES		= $(patsubst %,%.po,$(USE_LINGUAS))
++MOFILES		= $(patsubst %.po,%.mo,$(POFILES))
++POTFILES  = $(shell cat POTFILES)
++
++#default:: clean
++
++all:: $(POTFILE) $(MOFILES)
++
++$(POTFILE): $(POTFILES)
++	$(XGETTEXT) --keyword=_ --keyword=N_ $(POTFILES)
++	@if cmp -s $(NLSPACKAGE).po $(POTFILE); then \
++	    rm -f $(NLSPACKAGE).po; \
++	else \
++	    mv -f $(NLSPACKAGE).po $(POTFILE); \
++	fi; \
++
++
++refresh-po: Makefile
++	for cat in $(POFILES); do \
++		lang=`basename $$cat .po`; \
++		if $(MSGMERGE) $(MSGMERGE_FLAGS) $$lang.po $(POTFILE) > $$lang.pot ; then \
++			mv -f $$lang.pot $$lang.po ; \
++			echo "$(MSGMERGE) of $$lang succeeded" ; \
++		else \
++			echo "$(MSGMERGE) of $$lang failed" ; \
++			rm -f $$lang.pot ; \
++		fi \
++	done
++
++clean:
++	@rm -fv *mo *~ .depend
++	@rm -rf tmp
++
++install: $(MOFILES)
++	@for n in $(MOFILES); do \
++	    l=`basename $$n .mo`; \
++	    $(INSTALL_DIR) $(DESTDIR)$(INSTALL_NLS_DIR)/$$l/LC_MESSAGES; \
++	    $(INSTALL_DATA) --verbose $$n $(DESTDIR)$(INSTALL_NLS_DIR)/$$l/LC_MESSAGES/selinux-$(NLSPACKAGE).mo; \
++	done
++
++%.mo: %.po
++	$(MSGFMT) -o $@ $<
++report:
++	@for cat in $(wildcard *.po); do \
++                echo -n "$$cat: "; \
++                msgfmt -v --statistics -o /dev/null $$cat; \
++        done
++
++.PHONY: missing depend
++
++relabel:
+diff --git a/sandbox/po/POTFILES b/sandbox/po/POTFILES
+new file mode 100644
+index 00000000..deff3f2f
+--- /dev/null
++++ b/sandbox/po/POTFILES
+@@ -0,0 +1 @@
++../sandbox
+-- 
+2.21.0
+

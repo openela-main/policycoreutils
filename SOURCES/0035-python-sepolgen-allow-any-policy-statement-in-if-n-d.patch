@@ -1,0 +1,49 @@
+From e0a1cdb6181bcf3a23fe63b8e67fd5020e81d05e Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Fri, 22 Jan 2021 16:25:52 +0100
+Subject: [PATCH] python/sepolgen: allow any policy statement in if(n)def
+
+"ifdef/ifndef" statements can be used to conditionally define
+an interface, but this syntax is not recognised by sepolgen-ifgen.
+Fix sepolgen-ifgen to allow any policy statement inside an
+"ifdef/ifndef" statement.
+
+Fixes:
+        $ cat <<EOF > i.if
+ifndef(`apache_manage_pid_files',`
+        interface(`apache_manage_pid_files',`
+                manage_files_pattern($1, httpd_var_run_t, httpd_var_run_t)
+        ')
+')
+
+        #sepolgen-ifgen --interface=i.if
+        i.if: Syntax error on line 2 interface [type=INTERFACE]
+        i.if: Syntax error on line 4 ' [type=SQUOTE]
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+[OM: s/fidef/ifdef/]
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
+ python/sepolgen/src/sepolgen/refparser.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/python/sepolgen/src/sepolgen/refparser.py b/python/sepolgen/src/sepolgen/refparser.py
+index f506dc3a..5d77e2a3 100644
+--- a/python/sepolgen/src/sepolgen/refparser.py
++++ b/python/sepolgen/src/sepolgen/refparser.py
+@@ -431,9 +431,9 @@ def p_ifelse(p):
+ 
+ 
+ def p_ifdef(p):
+-    '''ifdef : IFDEF OPAREN TICK IDENTIFIER SQUOTE COMMA TICK interface_stmts SQUOTE CPAREN optional_semi
+-             | IFNDEF OPAREN TICK IDENTIFIER SQUOTE COMMA TICK interface_stmts SQUOTE CPAREN optional_semi
+-             | IFDEF OPAREN TICK IDENTIFIER SQUOTE COMMA TICK interface_stmts SQUOTE COMMA TICK interface_stmts SQUOTE CPAREN optional_semi
++    '''ifdef : IFDEF OPAREN TICK IDENTIFIER SQUOTE COMMA TICK statements SQUOTE CPAREN optional_semi
++             | IFNDEF OPAREN TICK IDENTIFIER SQUOTE COMMA TICK statements SQUOTE CPAREN optional_semi
++             | IFDEF OPAREN TICK IDENTIFIER SQUOTE COMMA TICK statements SQUOTE COMMA TICK statements SQUOTE CPAREN optional_semi
+     '''
+     x = refpolicy.IfDef(p[4])
+     if p[1] == 'ifdef':
+-- 
+2.29.2
+

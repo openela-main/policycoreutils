@@ -1,0 +1,45 @@
+From 7cbfcec89a6972f9c700687ed3cef25ff0846461 Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Tue, 8 Oct 2019 14:22:13 +0200
+Subject: [PATCH] python/semanage: Add support for DCCP and SCTP protocols
+
+Fixes:
+   # semanage port -a -p sctp -t port_t 1234
+   ValueError: Protocol udp or tcp is required
+   # semanage port -d -p sctp -t port_t 1234
+   ValueError: Protocol udp or tcp is required
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+---
+ python/semanage/seobject.py | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/python/semanage/seobject.py b/python/semanage/seobject.py
+index 16edacaa..70ebfd08 100644
+--- a/python/semanage/seobject.py
++++ b/python/semanage/seobject.py
+@@ -1058,13 +1058,15 @@ class portRecords(semanageRecords):
+             pass
+ 
+     def __genkey(self, port, proto):
+-        if proto == "tcp":
+-            proto_d = SEMANAGE_PROTO_TCP
++        protocols = {"tcp": SEMANAGE_PROTO_TCP,
++                     "udp": SEMANAGE_PROTO_UDP,
++                     "sctp": SEMANAGE_PROTO_SCTP,
++                     "dccp": SEMANAGE_PROTO_DCCP}
++
++        if proto in protocols.keys():
++            proto_d = protocols[proto]
+         else:
+-            if proto == "udp":
+-                proto_d = SEMANAGE_PROTO_UDP
+-            else:
+-                raise ValueError(_("Protocol udp or tcp is required"))
++            raise ValueError(_("Protocol has to be one of udp, tcp, dccp or sctp"))
+         if port == "":
+             raise ValueError(_("Port is required"))
+ 
+-- 
+2.21.0
+

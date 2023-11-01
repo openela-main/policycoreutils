@@ -1,0 +1,38 @@
+From f6c67c02f25d3a8971dcc5667121236fab85dd65 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Thu, 29 Aug 2019 08:58:20 +0200
+Subject: [PATCH] gui: Fix remove module in system-config-selinux
+
+When a user tried to remove a policy module with priority other than 400 via
+GUI, it failed with a message:
+
+libsemanage.semanage_direct_remove_key: Unable to remove module somemodule at priority 400. (No such file or directory).
+
+This is fixed by calling "semodule -x PRIORITY -r NAME" instead of
+"semodule -r NAME".
+
+From Jono Hein <fredwacko40@hotmail.com>
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+---
+ gui/modulesPage.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gui/modulesPage.py b/gui/modulesPage.py
+index 26ac5404..35a0129b 100644
+--- a/gui/modulesPage.py
++++ b/gui/modulesPage.py
+@@ -125,9 +125,10 @@ class modulesPage(semanagePage):
+     def delete(self):
+         store, iter = self.view.get_selection().get_selected()
+         module = store.get_value(iter, 0)
++        priority = store.get_value(iter, 1)
+         try:
+             self.wait()
+-            status, output = getstatusoutput("semodule -r %s" % module)
++            status, output = getstatusoutput("semodule -X %s -r %s" % (priority, module))
+             self.ready()
+             if status != 0:
+                 self.error(output)
+-- 
+2.21.0
+

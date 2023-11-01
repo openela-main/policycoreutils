@@ -1,0 +1,33 @@
+From 9bcf8ad7b9b6d8d761f7d097196b2b9bc114fa0a Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Tue, 2 Jul 2019 17:12:07 +0200
+Subject: [PATCH] policycoreutils/fixfiles: Force full relabel when SELinux is
+ disabled
+
+The previous check used getfilecon to check whether / slash contains a label,
+but getfilecon fails only when SELinux is disabled. Therefore it's better to
+check this using selinuxenabled.
+
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+---
+ policycoreutils/scripts/fixfiles | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/policycoreutils/scripts/fixfiles b/policycoreutils/scripts/fixfiles
+index 9dd44213..a9d27d13 100755
+--- a/policycoreutils/scripts/fixfiles
++++ b/policycoreutils/scripts/fixfiles
+@@ -314,8 +314,8 @@ case "$1" in
+ 	> /.autorelabel || exit $?
+ 	[ -z "$FORCEFLAG" ] || echo -n "$FORCEFLAG " >> /.autorelabel
+ 	[ -z "$BOOTTIME" ] || echo -N $BOOTTIME >> /.autorelabel
+-	# Force full relabel if / does not have a label on it
+-	getfilecon / > /dev/null 2>&1  || echo -F >/.autorelabel
++	# Force full relabel if SELinux is not enabled
++	selinuxenabled || echo -F > /.autorelabel
+ 	echo "System will relabel on next boot"
+ 	;;
+     *)
+-- 
+2.21.0
+

@@ -1,0 +1,112 @@
+From f3ddbd8220d9646072c9a4c9ed37f2dff998a53c Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Tue, 10 Jan 2023 11:37:26 +0100
+Subject: [PATCH] python/sepolicy: add missing booleans to man pages
+
+get_bools should return a list of booleans that can affect given type,
+but it did not handle non trivial conditional statements properly
+(returning the whole conditional statement instead of a list of booleans
+in the statement).
+
+e.g. for
+allow httpd_t spamc_t:process transition; [ httpd_can_check_spam && httpd_can_sendmail ]:True
+get_bools used to return [("httpd_can_check_spam && httpd_can_sendmail", False)] instead of
+[("httpd_can_check_spam", False), ("httpd_can_sendmail", False)]
+
+- rename "boolean" in sepolicy rule dictionary to "booleans" to suggest
+  it can contain multiple values and make sure it is populated correctly
+- add "conditional" key to the rule dictionary to accommodate
+  get_conditionals, which requires the whole conditional statement
+- extend get_bools search to dontaudit rules so that it covers booleans
+  like httpd_dontaudit_search_dirs
+
+Note: get_bools uses security_get_boolean_active to get the boolean
+      value, but the value is later used to represent the default.
+      Not ideal, but I'm not aware of a way to get the actual defaults.
+
+Fixes:
+        "sepolicy manpage" generates man pages that are missing booleans
+        which are included in non trivial conditional expressions
+        e.g. httpd_selinux(8) does not include httpd_can_check_spam,
+        httpd_tmp_exec, httpd_unified, or httpd_use_gpg
+
+        This fix, however, also adds some not strictly related booleans
+        to some man pages. e.g. use_nfs_home_dirs and
+        use_samba_home_dirs are added to httpd_selinux(8)
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+Acked-by: Jason Zaman <jason@perfinion.com>
+---
+ python/sepolicy/sepolicy/__init__.py | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/python/sepolicy/sepolicy/__init__.py b/python/sepolicy/sepolicy/__init__.py
+index b6ca57c3..0f51174d 100644
+--- a/python/sepolicy/sepolicy/__init__.py
++++ b/python/sepolicy/sepolicy/__init__.py
+@@ -324,7 +324,12 @@ def _setools_rule_to_dict(rule):
+         pass
+ 
+     try:
+-        d['boolean'] = [(str(rule.conditional), enabled)]
++        d['booleans'] = [(str(b), b.state) for b in rule.conditional.booleans]
++    except AttributeError:
++        pass
++
++    try:
++        d['conditional'] = str(rule.conditional)
+     except AttributeError:
+         pass
+ 
+@@ -426,12 +431,12 @@ def get_conditionals(src, dest, tclass, perm):
+                 x['source'] in src_list and
+                 x['target'] in dest_list and
+                 set(perm).issubset(x[PERMS]) and
+-                'boolean' in x,
++                'conditional' in x,
+                 get_all_allow_rules()))
+ 
+     try:
+         for i in allows:
+-            tdict.update({'source': i['source'], 'boolean': i['boolean']})
++            tdict.update({'source': i['source'], 'conditional': (i['conditional'], i['enabled'])})
+             if tdict not in tlist:
+                 tlist.append(tdict)
+                 tdict = {}
+@@ -445,10 +450,10 @@ def get_conditionals_format_text(cond):
+ 
+     enabled = False
+     for x in cond:
+-        if x['boolean'][0][1]:
++        if x['conditional'][1]:
+             enabled = True
+             break
+-    return _("-- Allowed %s [ %s ]") % (enabled, " || ".join(set(map(lambda x: "%s=%d" % (x['boolean'][0][0], x['boolean'][0][1]), cond))))
++    return _("-- Allowed %s [ %s ]") % (enabled, " || ".join(set(map(lambda x: "%s=%d" % (x['conditional'][0], x['conditional'][1]), cond))))
+ 
+ 
+ def get_types_from_attribute(attribute):
+@@ -703,9 +708,9 @@ def get_boolean_rules(setype, boolean):
+     boollist = []
+     permlist = search([ALLOW], {'source': setype})
+     for p in permlist:
+-        if "boolean" in p:
++        if "booleans" in p:
+             try:
+-                for b in p["boolean"]:
++                for b in p["booleans"]:
+                     if boolean in b:
+                         boollist.append(p)
+             except:
+@@ -1124,7 +1129,7 @@ def get_bools(setype):
+     bools = []
+     domainbools = []
+     domainname, short_name = gen_short_name(setype)
+-    for i in map(lambda x: x['boolean'], filter(lambda x: 'boolean' in x and x['source'] == setype, get_all_allow_rules())):
++    for i in map(lambda x: x['booleans'], filter(lambda x: 'booleans' in x and x['source'] == setype, search([ALLOW, DONTAUDIT]))):
+         for b in i:
+             if not isinstance(b, tuple):
+                 continue
+-- 
+2.37.3
+

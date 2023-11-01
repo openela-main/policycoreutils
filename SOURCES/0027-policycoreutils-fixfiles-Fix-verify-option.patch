@@ -1,0 +1,33 @@
+From 4733a594c5df14f64293d19f16498e68dc5e3a98 Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Tue, 24 Sep 2019 08:41:30 +0200
+Subject: [PATCH] policycoreutils/fixfiles: Fix "verify" option
+
+"restorecon -n" (used in the "restore" function) has to be used with
+"-v" to display the files whose labels would be changed.
+
+Fixes:
+   Fixfiles verify does not report misslabelled files unless "-v" option is
+   used.
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+---
+ policycoreutils/scripts/fixfiles | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/policycoreutils/scripts/fixfiles b/policycoreutils/scripts/fixfiles
+index df0042aa..be19e56c 100755
+--- a/policycoreutils/scripts/fixfiles
++++ b/policycoreutils/scripts/fixfiles
+@@ -304,7 +304,7 @@ process() {
+ case "$1" in
+     restore) restore Relabel;;
+     check) VERBOSE="-v"; restore Check -n;;
+-    verify) restore Verify -n;;
++    verify) VERBOSE="-v"; restore Verify -n;;
+     relabel) relabel;;
+     onboot)
+ 	if [ -n "$RESTORE_MODE" -a "$RESTORE_MODE" != DEFAULT ]; then
+-- 
+2.21.0
+
