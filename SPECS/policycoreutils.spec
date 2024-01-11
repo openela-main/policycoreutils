@@ -11,7 +11,7 @@
 Summary: SELinux policy core utilities
 Name:    policycoreutils
 Version: 3.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL-2.0-or-later
 # https://github.com/SELinuxProject/selinux/wiki/Releases
 Source0: https://github.com/SELinuxProject/selinux/releases/download/3.5/selinux-3.5.tar.gz
@@ -39,6 +39,19 @@ Patch0005: 0005-sepolicy-generate-Handle-more-reserved-port-types.patch
 Patch0006: 0006-sandbox-Use-matchbox-window-manager-instead-of-openb.patch
 Patch0007: 0007-Use-SHA-2-instead-of-SHA-1.patch
 Patch0008: 0008-sepolicy-Drop-old-interface-file_type_is_executable-.patch
+Patch0009: 0009-python-chcat-Improve-man-pages.patch
+Patch0010: 0010-python-audit2allow-Add-missing-options-to-man-page.patch
+Patch0011: 0011-python-semanage-Improve-man-pages.patch
+Patch0012: 0012-python-audit2allow-Remove-unused-debug-option.patch
+Patch0013: 0013-policycoreutils-Add-examples-to-man-pages.patch
+Patch0014: 0014-python-sepolicy-Improve-man-pages.patch
+Patch0015: 0015-sandbox-Add-examples-to-man-pages.patch
+Patch0016: 0016-python-sepolicy-Fix-template-for-confined-user-polic.patch
+Patch0017: 0017-python-sepolicy-Fix-spec-file-dependencies.patch
+Patch0018: 0018-python-improve-format-strings-for-proper-localizatio.patch
+Patch0019: 0019-python-Drop-hard-formating-from-localized-strings.patch
+Patch0020: 0020-semanage-Drop-unnecessary-import-from-seobject.patch
+Patch0021: 0021-python-update-python.pot.patch
 # Patch list end
 Obsoletes: policycoreutils < 2.0.61-2
 Conflicts: filesystem < 3, selinux-policy-base < 3.13.1-138
@@ -444,6 +457,10 @@ The policycoreutils-restorecond package contains the restorecond service.
 %systemd_postun_with_restart restorecond.service
 
 %changelog
+* Tue Jun 27 2023 Petr Lautrbach <lautrbach@redhat.com> - 3.5-2
+- Improve man pages (RHEL-672)
+- Unwrap strings - remove hard returns and initial white spaces from strings (RHEL-606)
+
 * Thu Feb 23 2023 Petr Lautrbach <lautrbach@redhat.com> - 3.5-1
 - SELinux userspace 3.5 release
 
