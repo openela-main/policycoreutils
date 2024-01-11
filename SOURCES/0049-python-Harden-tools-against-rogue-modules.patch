@@ -1,0 +1,79 @@
+From 72c7e9123980b003a21d51e2805529a3e90b2460 Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Thu, 13 Oct 2022 17:33:18 +0200
+Subject: [PATCH] python: Harden tools against "rogue" modules
+
+Python scripts present in "/usr/sbin" override regular modules.
+Make sure /usr/sbin is not present in PYTHONPATH.
+
+Fixes:
+  #cat > /usr/sbin/audit.py <<EOF
+  import sys
+  print("BAD GUY!", file=sys.stderr)
+  sys.exit(1)
+  EOF
+  #semanage boolean -l
+  BAD GUY!
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+---
+ python/audit2allow/audit2allow    | 2 +-
+ python/audit2allow/sepolgen-ifgen | 2 +-
+ python/chcat/chcat                | 2 +-
+ python/semanage/semanage          | 2 +-
+ python/sepolicy/sepolicy.py       | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/python/audit2allow/audit2allow b/python/audit2allow/audit2allow
+index 09b06f66..eafeea88 100644
+--- a/python/audit2allow/audit2allow
++++ b/python/audit2allow/audit2allow
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python3 -Es
++#!/usr/bin/python3 -EsI
+ # Authors: Karl MacMillan <kmacmillan@mentalrootkit.com>
+ # Authors: Dan Walsh <dwalsh@redhat.com>
+ #
+diff --git a/python/audit2allow/sepolgen-ifgen b/python/audit2allow/sepolgen-ifgen
+index be2d093b..f25f8af1 100644
+--- a/python/audit2allow/sepolgen-ifgen
++++ b/python/audit2allow/sepolgen-ifgen
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python3 -Es
++#!/usr/bin/python3 -EsI
+ #
+ # Authors: Karl MacMillan <kmacmillan@mentalrootkit.com>
+ #
+diff --git a/python/chcat/chcat b/python/chcat/chcat
+index df2509f2..5671cec6 100755
+--- a/python/chcat/chcat
++++ b/python/chcat/chcat
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python3 -Es
++#!/usr/bin/python3 -EsI
+ # Copyright (C) 2005 Red Hat
+ # see file 'COPYING' for use and warranty information
+ #
+diff --git a/python/semanage/semanage b/python/semanage/semanage
+index b8842d28..1f170f60 100644
+--- a/python/semanage/semanage
++++ b/python/semanage/semanage
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python3 -Es
++#!/usr/bin/python3 -EsI
+ # Copyright (C) 2012-2013 Red Hat
+ # AUTHOR: Miroslav Grepl <mgrepl@redhat.com>
+ # AUTHOR: David Quigley <selinux@davequigley.com>
+diff --git a/python/sepolicy/sepolicy.py b/python/sepolicy/sepolicy.py
+index 8bd6a579..0c1d9641 100755
+--- a/python/sepolicy/sepolicy.py
++++ b/python/sepolicy/sepolicy.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python3 -Es
++#!/usr/bin/python3 -EsI
+ # Copyright (C) 2012 Red Hat
+ # AUTHOR: Dan Walsh <dwalsh@redhat.com>
+ # see file 'COPYING' for use and warranty information
+-- 
+2.37.3
+

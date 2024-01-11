@@ -1,0 +1,25 @@
+From 4ea504acce6389c3e28134c4b8e6bf9072c295ce Mon Sep 17 00:00:00 2001
+From: Miroslav Grepl <mgrepl@redhat.com>
+Date: Fri, 20 Feb 2015 16:42:53 +0100
+Subject: [PATCH] Fix title in manpage.py to not contain 'online'.
+
+---
+ python/sepolicy/sepolicy/manpage.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/python/sepolicy/sepolicy/manpage.py b/python/sepolicy/sepolicy/manpage.py
+index d60acfaf..de8184d8 100755
+--- a/python/sepolicy/sepolicy/manpage.py
++++ b/python/sepolicy/sepolicy/manpage.py
+@@ -220,7 +220,7 @@ class HTMLManPages:
+ <html>
+ <head>
+ 	<link rel=stylesheet type="text/css" href="style.css" title="style">
+-	<title>SELinux man pages online</title>
++	<title>SELinux man pages</title>
+ </head>
+ <body>
+ <h1>SELinux man pages for %s</h1>
+-- 
+2.21.0
+

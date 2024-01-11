@@ -1,0 +1,102 @@
+From 0803fcb2c014b2cedf8f4d92b80fc382916477ee Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Fri, 27 Sep 2019 16:13:47 +0200
+Subject: [PATCH] python/semanage: Improve handling of "permissive" statements
+
+- Add "customized" method to permissiveRecords which is than used for
+  "semanage permissive --extract" and "semanage export"
+- Enable "semanage permissive --deleteall" (already implemented)
+- Add "permissive" to the list of modules exported using
+  "semanage export"
+- Update "semanage permissive" man page
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+---
+ python/semanage/semanage              | 11 ++++++++---
+ python/semanage/semanage-permissive.8 |  8 +++++++-
+ python/semanage/seobject.py           |  3 +++
+ 3 files changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/python/semanage/semanage b/python/semanage/semanage
+index fa78afce..b2bd9df9 100644
+--- a/python/semanage/semanage
++++ b/python/semanage/semanage
+@@ -722,6 +722,11 @@ def handlePermissive(args):
+ 
+     if args.action == "list":
+         OBJECT.list(args.noheading)
++    elif args.action == "deleteall":
++        OBJECT.deleteall()
++    elif args.action == "extract":
++        for i in OBJECT.customized():
++            print("permissive %s" % str(i))
+     elif args.type is not None:
+         if args.action == "add":
+             OBJECT.add(args.type)
+@@ -737,9 +742,9 @@ def setupPermissiveParser(subparsers):
+     pgroup = permissiveParser.add_mutually_exclusive_group(required=True)
+     parser_add_add(pgroup, "permissive")
+     parser_add_delete(pgroup, "permissive")
++    parser_add_deleteall(pgroup, "permissive")
++    parser_add_extract(pgroup, "permissive")
+     parser_add_list(pgroup, "permissive")
+-    #TODO: probably should be also added => need to implement own option handling
+-    #parser_add_deleteall(pgroup)
+ 
+     parser_add_noheading(permissiveParser, "permissive")
+     parser_add_noreload(permissiveParser, "permissive")
+@@ -763,7 +768,7 @@ def setupDontauditParser(subparsers):
+ 
+ 
+ def handleExport(args):
+-    manageditems = ["boolean", "login", "interface", "user", "port", "node", "fcontext", "module", "ibendport", "ibpkey"]
++    manageditems = ["boolean", "login", "interface", "user", "port", "node", "fcontext", "module", "ibendport", "ibpkey", "permissive"]
+     for i in manageditems:
+         print("%s -D" % i)
+     for i in manageditems:
+diff --git a/python/semanage/semanage-permissive.8 b/python/semanage/semanage-permissive.8
+index 1999a451..5c3364fa 100644
+--- a/python/semanage/semanage-permissive.8
++++ b/python/semanage/semanage-permissive.8
+@@ -2,7 +2,7 @@
+ .SH "NAME"
+ .B semanage\-permissive \- SELinux Policy Management permissive mapping tool
+ .SH "SYNOPSIS"
+-.B semanage permissive [\-h] (\-a | \-d | \-l) [\-n] [\-N] [\-S STORE] [type]
++.B semanage permissive [\-h] [\-n] [\-N] [\-S STORE] (\-\-add TYPE | \-\-delete TYPE | \-\-deleteall | \-\-extract | \-\-list)
+ 
+ .SH "DESCRIPTION"
+ semanage is used to configure certain elements of SELinux policy without requiring modification to or recompilation from policy sources.  semanage permissive adds or removes a SELinux Policy permissive module.
+@@ -18,9 +18,15 @@ Add a record of the specified object type
+ .I   \-d, \-\-delete
+ Delete a record of the specified object type
+ .TP
++.I   \-D, \-\-deleteall
++Remove all local customizations of permissive domains
++.TP
+ .I   \-l, \-\-list
+ List records of the specified object type
+ .TP
++.I   \-E, \-\-extract
++Extract customizable commands, for use within a transaction
++.TP
+ .I   \-n, \-\-noheading
+ Do not print heading when listing the specified object type
+ .TP
+diff --git a/python/semanage/seobject.py b/python/semanage/seobject.py
+index 58497e3b..3959abc8 100644
+--- a/python/semanage/seobject.py
++++ b/python/semanage/seobject.py
+@@ -478,6 +478,9 @@ class permissiveRecords(semanageRecords):
+                 l.append(name.split("permissive_")[1])
+         return l
+ 
++    def customized(self):
++        return ["-a %s" % x for x in sorted(self.get_all())]
++
+     def list(self, heading=1, locallist=0):
+         all = [y["name"] for y in [x for x in sepolicy.info(sepolicy.TYPE) if x["permissive"]]]
+         if len(all) == 0:
+-- 
+2.21.0
+

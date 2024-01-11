@@ -1,0 +1,44 @@
+From a691da617a2d3c864786ff2742d9a9f87ecc7d05 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Mon, 1 Feb 2021 15:24:32 +0100
+Subject: [PATCH] policycoreutils/setfiles: Drop unused nerr variable
+
+Suggested-by: Nicolas Iooss <nicolas.iooss@m4x.org>
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+---
+ policycoreutils/setfiles/setfiles.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/policycoreutils/setfiles/setfiles.c b/policycoreutils/setfiles/setfiles.c
+index bcbdfbfe53e2..82d0aaa75893 100644
+--- a/policycoreutils/setfiles/setfiles.c
++++ b/policycoreutils/setfiles/setfiles.c
+@@ -19,7 +19,6 @@ static int warn_no_match;
+ static int null_terminated;
+ static int request_digest;
+ static struct restore_opts r_opts;
+-static int nerr;
+ 
+ #define STAT_BLOCK_SIZE 1
+ 
+@@ -162,7 +161,6 @@ int main(int argc, char **argv)
+ 	warn_no_match = 0;
+ 	request_digest = 0;
+ 	policyfile = NULL;
+-	nerr = 0;
+ 
+ 	r_opts.abort_on_error = 0;
+ 	r_opts.progname = strdup(argv[0]);
+@@ -417,9 +415,6 @@ int main(int argc, char **argv)
+ 	r_opts.selabel_opt_digest = (request_digest ? (char *)1 : NULL);
+ 	r_opts.selabel_opt_path = altpath;
+ 
+-	if (nerr)
+-		exit(-1);
+-
+ 	restore_init(&r_opts);
+ 
+ 	if (use_input_file) {
+-- 
+2.30.0
+

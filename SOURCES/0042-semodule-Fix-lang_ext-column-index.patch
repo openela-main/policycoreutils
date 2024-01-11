@@ -1,0 +1,29 @@
+From 14084bad4f5bcfdb769ba39c9a6f12e4787ab909 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Tue, 16 Nov 2021 16:11:22 +0100
+Subject: [PATCH] semodule: Fix lang_ext column index
+
+lang_ext is 3. column - index number 2.
+
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+Acked-by: James Carter <jwcart2@gmail.com>
+---
+ policycoreutils/semodule/semodule.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/policycoreutils/semodule/semodule.c b/policycoreutils/semodule/semodule.c
+index 300a97d735cc..c677cc4f1d81 100644
+--- a/policycoreutils/semodule/semodule.c
++++ b/policycoreutils/semodule/semodule.c
+@@ -682,7 +682,7 @@ cleanup_extract:
+ 						if (result != 0) goto cleanup_list;
+ 
+ 						size = strlen(tmp);
+-						if (size > column[3]) column[3] = size;
++						if (size > column[2]) column[2] = size;
+ 					}
+ 
+ 					/* print out each module */
+-- 
+2.33.1
+

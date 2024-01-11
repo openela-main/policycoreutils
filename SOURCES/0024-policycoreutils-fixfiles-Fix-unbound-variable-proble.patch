@@ -1,0 +1,32 @@
+From 7383f8fbab82826de21d3013a43680867642e49e Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Wed, 21 Aug 2019 17:43:25 +0200
+Subject: [PATCH] policycoreutils/fixfiles: Fix unbound variable problem
+
+Fix a typo introduced in commit d3f8b2c3cd909 ("policycoreutils/fixfiles: Fix
+[-B] [-F] onboot"), which broke  "fixfiles relabel":
+
+    #fixfiles relabel
+    /sbin/fixfiles: line 151: $1: unbound variable
+
+Resolves: rhbz#1743213
+---
+ policycoreutils/scripts/fixfiles | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/policycoreutils/scripts/fixfiles b/policycoreutils/scripts/fixfiles
+index a9d27d13..df0042aa 100755
+--- a/policycoreutils/scripts/fixfiles
++++ b/policycoreutils/scripts/fixfiles
+@@ -215,7 +215,7 @@ OPTION=$1
+ shift
+ 
+ # [-B | -N time ]
+-if [ -z "$BOOTTIME" ]; then
++if [ -n "$BOOTTIME" ]; then
+ 	newer $BOOTTIME $*
+ 	return
+ fi
+-- 
+2.21.0
+

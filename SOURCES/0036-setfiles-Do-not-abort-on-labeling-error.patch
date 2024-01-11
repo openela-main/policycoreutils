@@ -1,0 +1,68 @@
+From 53ccdd55adfbec60fb4277286f2ad94660838504 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Wed, 13 Jan 2021 22:09:47 +0100
+Subject: [PATCH] setfiles: Do not abort on labeling error
+
+Commit 602347c7422e ("policycoreutils: setfiles - Modify to use
+selinux_restorecon") changed behavior of setfiles. Original
+implementation skipped files which it couldn't set context to while the
+new implementation aborts on them. setfiles should abort only if it
+can't validate a context from spec_file.
+
+Reproducer:
+
+    # mkdir -p r/1 r/2 r/3
+    # touch r/1/1 r/2/1
+    # chattr +i r/2/1
+    # touch r/3/1
+    # setfiles -r r -v /etc/selinux/targeted/contexts/files/file_contexts r
+    Relabeled r from unconfined_u:object_r:mnt_t:s0 to unconfined_u:object_r:root_t:s0
+    Relabeled r/2 from unconfined_u:object_r:mnt_t:s0 to unconfined_u:object_r:default_t:s0
+    setfiles: Could not set context for r/2/1:  Operation not permitted
+
+r/3 and r/1 are not relabeled.
+
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+---
+ policycoreutils/setfiles/setfiles.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/policycoreutils/setfiles/setfiles.c b/policycoreutils/setfiles/setfiles.c
+index bc83c27b4c06..68eab45aa2b4 100644
+--- a/policycoreutils/setfiles/setfiles.c
++++ b/policycoreutils/setfiles/setfiles.c
+@@ -182,6 +182,7 @@ int main(int argc, char **argv)
+ 	policyfile = NULL;
+ 	nerr = 0;
+ 
++	r_opts.abort_on_error = 0;
+ 	r_opts.progname = strdup(argv[0]);
+ 	if (!r_opts.progname) {
+ 		fprintf(stderr, "%s:  Out of memory!\n", argv[0]);
+@@ -194,7 +195,6 @@ int main(int argc, char **argv)
+ 		 * setfiles:
+ 		 * Recursive descent,
+ 		 * Does not expand paths via realpath,
+-		 * Aborts on errors during the file tree walk,
+ 		 * Try to track inode associations for conflict detection,
+ 		 * Does not follow mounts (sets SELINUX_RESTORECON_XDEV),
+ 		 * Validates all file contexts at init time.
+@@ -202,7 +202,6 @@ int main(int argc, char **argv)
+ 		iamrestorecon = 0;
+ 		r_opts.recurse = SELINUX_RESTORECON_RECURSE;
+ 		r_opts.userealpath = 0; /* SELINUX_RESTORECON_REALPATH */
+-		r_opts.abort_on_error = SELINUX_RESTORECON_ABORT_ON_ERROR;
+ 		r_opts.add_assoc = SELINUX_RESTORECON_ADD_ASSOC;
+ 		/* FTS_PHYSICAL and FTS_NOCHDIR are always set by selinux_restorecon(3) */
+ 		r_opts.xdev = SELINUX_RESTORECON_XDEV;
+@@ -226,7 +225,6 @@ int main(int argc, char **argv)
+ 		iamrestorecon = 1;
+ 		r_opts.recurse = 0;
+ 		r_opts.userealpath = SELINUX_RESTORECON_REALPATH;
+-		r_opts.abort_on_error = 0;
+ 		r_opts.add_assoc = 0;
+ 		r_opts.xdev = 0;
+ 		r_opts.ignore_mounts = 0;
+-- 
+2.30.0
+

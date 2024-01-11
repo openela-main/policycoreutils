@@ -1,0 +1,41 @@
+From 7cc31c4799dd94ed516a39d853744bd1ffb6dc69 Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Mon, 30 Sep 2019 09:49:04 +0200
+Subject: [PATCH] python/semanage: fix moduleRecords.customized()
+
+Return value of "customized" has to be iterable.
+
+Fixes:
+   "semanage export" with no modules in the system (eg. monolithic policy)
+   crashes:
+
+   Traceback (most recent call last):
+     File "/usr/sbin/semanage", line 970, in <module>
+       do_parser()
+     File "/usr/sbin/semanage", line 949, in do_parser
+       args.func(args)
+     File "/usr/sbin/semanage", line 771, in handleExport
+       for c in OBJECT.customized():
+   TypeError: 'NoneType' object is not iterable
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+---
+ python/semanage/seobject.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/python/semanage/seobject.py b/python/semanage/seobject.py
+index 3959abc8..16edacaa 100644
+--- a/python/semanage/seobject.py
++++ b/python/semanage/seobject.py
+@@ -380,7 +380,7 @@ class moduleRecords(semanageRecords):
+     def customized(self):
+         all = self.get_all()
+         if len(all) == 0:
+-            return
++            return []
+         return ["-d %s" % x[0] for x in [t for t in all if t[1] == 0]]
+ 
+     def list(self, heading=1, locallist=0):
+-- 
+2.21.0
+

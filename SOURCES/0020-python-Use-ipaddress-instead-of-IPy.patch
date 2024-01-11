@@ -1,0 +1,45 @@
+From b2512e2a92a33360639a3459039cdf2e685655a8 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Mon, 3 Dec 2018 14:40:09 +0100
+Subject: [PATCH] python: Use ipaddress instead of IPy
+
+ipaddress module was added in python 3.3 and this allows us to drop python3-IPy
+---
+ python/semanage/seobject.py | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/python/semanage/seobject.py b/python/semanage/seobject.py
+index b90b1070..58497e3b 100644
+--- a/python/semanage/seobject.py
++++ b/python/semanage/seobject.py
+@@ -32,7 +32,7 @@ from semanage import *
+ PROGNAME = "selinux-python"
+ import sepolicy
+ import setools
+-from IPy import IP
++import ipaddress
+ 
+ try:
+     import gettext
+@@ -1851,13 +1851,13 @@ class nodeRecords(semanageRecords):
+ 
+         # verify valid comination
+         if len(mask) == 0 or mask[0] == "/":
+-            i = IP(addr + mask)
+-            newaddr = i.strNormal(0)
+-            newmask = str(i.netmask())
+-            if newmask == "0.0.0.0" and i.version() == 6:
++            i = ipaddress.ip_network(addr + mask)
++            newaddr = str(i.network_address)
++            newmask = str(i.netmask)
++            if newmask == "0.0.0.0" and i.version == 6:
+                 newmask = "::"
+ 
+-            protocol = "ipv%d" % i.version()
++            protocol = "ipv%d" % i.version
+ 
+         try:
+             newprotocol = self.protocol.index(protocol)
+-- 
+2.21.0
+

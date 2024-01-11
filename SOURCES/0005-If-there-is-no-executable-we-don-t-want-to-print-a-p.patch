@@ -1,0 +1,27 @@
+From 9847a26b7f8358432ee4c7019efb3cbad0c162b0 Mon Sep 17 00:00:00 2001
+From: Miroslav Grepl <mgrepl@redhat.com>
+Date: Mon, 12 May 2014 14:11:22 +0200
+Subject: [PATCH] If there is no executable we don't want to print a part of
+ STANDARD FILE CONTEXT
+
+---
+ python/sepolicy/sepolicy/manpage.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/python/sepolicy/sepolicy/manpage.py b/python/sepolicy/sepolicy/manpage.py
+index 24e311a3..46092be0 100755
+--- a/python/sepolicy/sepolicy/manpage.py
++++ b/python/sepolicy/sepolicy/manpage.py
+@@ -793,7 +793,8 @@ SELinux %(domainname)s policy is very flexible allowing users to setup their %(d
+ .PP
+ """ % {'domainname': self.domainname, 'equiv': e, 'alt': e.split('/')[-1]})
+ 
+-        self.fd.write(r"""
++        if flist_non_exec:
++                self.fd.write(r"""
+ .PP
+ .B STANDARD FILE CONTEXT
+ 
+-- 
+2.21.0
+

@@ -1,0 +1,32 @@
+From 61f05b6d26063e1ebdc06609c29a067d44579b41 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Tue, 23 Nov 2021 17:38:51 +0100
+Subject: [PATCH] semodule: Don't forget to munmap() data
+
+semanage_module_extract() mmap()'s the module raw data but it leaves on
+the caller to munmap() them.
+
+Reported-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+Acked-by: James Carter <jwcart2@gmail.com>
+---
+ policycoreutils/semodule/semodule.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/policycoreutils/semodule/semodule.c b/policycoreutils/semodule/semodule.c
+index c677cc4f1d81..dc227058b073 100644
+--- a/policycoreutils/semodule/semodule.c
++++ b/policycoreutils/semodule/semodule.c
+@@ -393,6 +393,9 @@ static char *hash_module_data(const char *module_name, const int prio) {
+ 	sha256_buf[i * 2] = 0;
+ 
+ cleanup_extract:
++	if (data_len > 0) {
++		munmap(data, data_len);
++	}
+ 	semanage_module_info_destroy(sh, extract_info);
+ 	free(extract_info);
+ 	semanage_module_key_destroy(sh, modkey);
+-- 
+2.33.1
+

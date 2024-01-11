@@ -1,0 +1,43 @@
+From c778509dd0ed3b184d720032f31971f975e42973 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Tue, 5 Mar 2019 17:38:55 +0100
+Subject: [PATCH] gui: Install polgengui.py to /usr/bin/selinux-polgengui
+
+polgengui.py is a standalone gui tool which should be in /usr/bin with other
+tools.
+
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+---
+ gui/Makefile       | 2 +-
+ gui/modulesPage.py | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gui/Makefile b/gui/Makefile
+index c2f982de..b2375fbf 100644
+--- a/gui/Makefile
++++ b/gui/Makefile
+@@ -31,7 +31,7 @@ install: all
+ 	-mkdir -p $(DESTDIR)$(DATADIR)/polkit-1/actions/
+ 	install -m 755 system-config-selinux.py $(DESTDIR)$(SHAREDIR)
+ 	install -m 755 system-config-selinux $(DESTDIR)$(BINDIR)
+-	install -m 755 polgengui.py $(DESTDIR)$(SHAREDIR)
++	install -m 755 polgengui.py $(DESTDIR)$(BINDIR)/selinux-polgengui
+ 	install -m 644 $(TARGETS) $(DESTDIR)$(SHAREDIR)
+ 	install -m 644 system-config-selinux.8 $(DESTDIR)$(MANDIR)/man8
+ 	install -m 644 selinux-polgengui.8 $(DESTDIR)$(MANDIR)/man8
+diff --git a/gui/modulesPage.py b/gui/modulesPage.py
+index 34c5d9e3..cb856b2d 100644
+--- a/gui/modulesPage.py
++++ b/gui/modulesPage.py
+@@ -118,7 +118,7 @@ class modulesPage(semanagePage):
+ 
+     def new_module(self, args):
+         try:
+-            Popen(["/usr/share/system-config-selinux/polgengui.py"])
++            Popen(["selinux-polgengui"])
+         except ValueError as e:
+             self.error(e.args[0])
+ 
+-- 
+2.21.0
+

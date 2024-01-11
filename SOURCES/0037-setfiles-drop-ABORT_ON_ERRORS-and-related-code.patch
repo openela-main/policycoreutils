@@ -1,0 +1,110 @@
+From 2f135022f4372dc34198c48cfd67b91044e6dfd7 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Wed, 13 Jan 2021 22:09:48 +0100
+Subject: [PATCH] setfiles: drop ABORT_ON_ERRORS and related code
+
+`setfiles -d` doesn't have any impact on number of errors before it
+aborts. It always aborts on first invalid context in spec file.
+
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+---
+ policycoreutils/setfiles/Makefile      |  3 ---
+ policycoreutils/setfiles/ru/setfiles.8 |  2 +-
+ policycoreutils/setfiles/setfiles.8    |  3 +--
+ policycoreutils/setfiles/setfiles.c    | 18 ------------------
+ 4 files changed, 2 insertions(+), 24 deletions(-)
+
+diff --git a/policycoreutils/setfiles/Makefile b/policycoreutils/setfiles/Makefile
+index bc5a8db789a5..a3bbbe116b7f 100644
+--- a/policycoreutils/setfiles/Makefile
++++ b/policycoreutils/setfiles/Makefile
+@@ -5,8 +5,6 @@ SBINDIR ?= /sbin
+ MANDIR = $(PREFIX)/share/man
+ AUDITH ?= $(shell test -f /usr/include/libaudit.h && echo y)
+ 
+-ABORT_ON_ERRORS=$(shell grep "^\#define ABORT_ON_ERRORS" setfiles.c | awk -S '{ print $$3 }')
+-
+ CFLAGS ?= -g -Werror -Wall -W
+ override LDLIBS += -lselinux -lsepol
+ 
+@@ -26,7 +24,6 @@ restorecon_xattr: restorecon_xattr.o restore.o
+ 
+ man:
+ 	@cp -af setfiles.8 setfiles.8.man
+-	@sed -i "s/ABORT_ON_ERRORS/$(ABORT_ON_ERRORS)/g" setfiles.8.man
+ 
+ install: all
+ 	[ -d $(DESTDIR)$(MANDIR)/man8 ] || mkdir -p $(DESTDIR)$(MANDIR)/man8
+diff --git a/policycoreutils/setfiles/ru/setfiles.8 b/policycoreutils/setfiles/ru/setfiles.8
+index 27815a3f1eee..910101452625 100644
+--- a/policycoreutils/setfiles/ru/setfiles.8
++++ b/policycoreutils/setfiles/ru/setfiles.8
+@@ -47,7 +47,7 @@ setfiles \- установить SELinux-контексты безопаснос
+ проверить действительность контекстов относительно указанной двоичной политики.
+ .TP
+ .B \-d
+-показать, какая спецификация соответствует каждому из файлов (не прекращать проверку после получения ошибок ABORT_ON_ERRORS).
++показать, какая спецификация соответствует каждому из файлов.
+ .TP
+ .BI \-e \ directory
+ исключить каталог (чтобы исключить более одного каталога, этот параметр необходимо использовать соответствующее количество раз).
+diff --git a/policycoreutils/setfiles/setfiles.8 b/policycoreutils/setfiles/setfiles.8
+index a8a76c860dac..b7d3cefb96ff 100644
+--- a/policycoreutils/setfiles/setfiles.8
++++ b/policycoreutils/setfiles/setfiles.8
+@@ -56,8 +56,7 @@ option will force a replacement of the entire context.
+ check the validity of the contexts against the specified binary policy.
+ .TP
+ .B \-d
+-show what specification matched each file (do not abort validation
+-after ABORT_ON_ERRORS errors). Not affected by "\-q"
++show what specification matched each file. Not affected by "\-q"
+ .TP
+ .BI \-e \ directory
+ directory to exclude (repeat option for more than one directory).
+diff --git a/policycoreutils/setfiles/setfiles.c b/policycoreutils/setfiles/setfiles.c
+index 68eab45aa2b4..bcbdfbfe53e2 100644
+--- a/policycoreutils/setfiles/setfiles.c
++++ b/policycoreutils/setfiles/setfiles.c
+@@ -23,14 +23,6 @@ static int nerr;
+ 
+ #define STAT_BLOCK_SIZE 1
+ 
+-/* setfiles will abort its operation after reaching the
+- * following number of errors (e.g. invalid contexts),
+- * unless it is used in "debug" mode (-d option).
+- */
+-#ifndef ABORT_ON_ERRORS
+-#define ABORT_ON_ERRORS	10
+-#endif
+-
+ #define SETFILES "setfiles"
+ #define RESTORECON "restorecon"
+ static int iamrestorecon;
+@@ -57,15 +49,6 @@ static __attribute__((__noreturn__)) void usage(const char *const name)
+ 	exit(-1);
+ }
+ 
+-void inc_err(void)
+-{
+-	nerr++;
+-	if (nerr > ABORT_ON_ERRORS - 1 && !r_opts.debug) {
+-		fprintf(stderr, "Exiting after %d errors.\n", ABORT_ON_ERRORS);
+-		exit(-1);
+-	}
+-}
+-
+ void set_rootpath(const char *arg)
+ {
+ 	if (strlen(arg) == 1 && strncmp(arg, "/", 1) == 0) {
+@@ -98,7 +81,6 @@ int canoncon(char **contextp)
+ 		*contextp = tmpcon;
+ 	} else if (errno != ENOENT) {
+ 		rc = -1;
+-		inc_err();
+ 	}
+ 
+ 	return rc;
+-- 
+2.30.0
+

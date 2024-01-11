@@ -1,0 +1,30 @@
+From c2e942fc452bff06cc5ed9017afe169c6941f4e4 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Tue, 3 Sep 2019 15:17:27 +0200
+Subject: [PATCH] python/semanage: Do not use default s0 range in "semanage
+ login -a"
+
+Using the "s0" default means that new login mappings are always added with "s0"
+range instead of the range of SELinux user.
+
+Signed-off-by: Petr Lautrbach <plautrba@redhat.com>
+---
+ python/semanage/semanage | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/python/semanage/semanage b/python/semanage/semanage
+index 4c766ae3..fa78afce 100644
+--- a/python/semanage/semanage
++++ b/python/semanage/semanage
+@@ -221,7 +221,7 @@ def parser_add_level(parser, name):
+ 
+ 
+ def parser_add_range(parser, name):
+-    parser.add_argument('-r', '--range', default="s0",
++    parser.add_argument('-r', '--range', default='',
+                         help=_('''
+ MLS/MCS Security Range (MLS/MCS Systems only)
+ SELinux Range  for SELinux login mapping
+-- 
+2.21.0
+

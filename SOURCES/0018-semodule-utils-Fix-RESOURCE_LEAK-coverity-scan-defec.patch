@@ -1,0 +1,24 @@
+From f8602180d042e95947fe0bbd35d261771b347705 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <plautrba@redhat.com>
+Date: Thu, 8 Nov 2018 09:20:58 +0100
+Subject: [PATCH] semodule-utils: Fix RESOURCE_LEAK coverity scan defects
+
+---
+ semodule-utils/semodule_package/semodule_package.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/semodule-utils/semodule_package/semodule_package.c b/semodule-utils/semodule_package/semodule_package.c
+index 3515234e..7b75b3fd 100644
+--- a/semodule-utils/semodule_package/semodule_package.c
++++ b/semodule-utils/semodule_package/semodule_package.c
+@@ -74,6 +74,7 @@ static int file_to_data(const char *path, char **data, size_t * len)
+ 	}
+ 	if (!sb.st_size) {
+ 		*len = 0;
++		close(fd);
+ 		return 0;
+ 	}
+ 
+-- 
+2.21.0
+

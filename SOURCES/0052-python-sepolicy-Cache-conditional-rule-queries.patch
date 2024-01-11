@@ -1,0 +1,73 @@
+From 25373db5cac520b85350db91b8a7ed0737d3316c Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Tue, 24 Jan 2023 21:05:05 +0100
+Subject: [PATCH] python/sepolicy: Cache conditional rule queries
+
+Commit 7506771e4b630fe0ab853f96574e039055cb72eb
+"add missing booleans to man pages" dramatically slowed down
+"sepolicy manpage -a" by removing caching of setools rule query.
+Re-add said caching and update the query to only return conditional
+rules.
+
+Before commit 7506771e:
+ #time sepolicy manpage -a
+ real	1m43.153s
+ # time sepolicy manpage -d httpd_t
+ real	0m4.493s
+
+After commit 7506771e:
+ #time sepolicy manpage -a
+ real   1h56m43.153s
+ # time sepolicy manpage -d httpd_t
+ real	0m8.352s
+
+After this commit:
+ #time sepolicy manpage -a
+ real	1m41.074s
+ # time sepolicy manpage -d httpd_t
+ real	0m7.358s
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+---
+ python/sepolicy/sepolicy/__init__.py | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/python/sepolicy/sepolicy/__init__.py b/python/sepolicy/sepolicy/__init__.py
+index 0f51174d..f48231e9 100644
+--- a/python/sepolicy/sepolicy/__init__.py
++++ b/python/sepolicy/sepolicy/__init__.py
+@@ -114,6 +114,7 @@ all_attributes = None
+ booleans = None
+ booleans_dict = None
+ all_allow_rules = None
++all_bool_rules = None
+ all_transitions = None
+ 
+ 
+@@ -1119,6 +1120,14 @@ def get_all_allow_rules():
+         all_allow_rules = search([ALLOW])
+     return all_allow_rules
+ 
++def get_all_bool_rules():
++    global all_bool_rules
++    if not all_bool_rules:
++        q = setools.TERuleQuery(_pol, boolean=".*", boolean_regex=True,
++                                ruletype=[ALLOW, DONTAUDIT])
++        all_bool_rules = [_setools_rule_to_dict(x) for x in q.results()]
++    return all_bool_rules
++
+ def get_all_transitions():
+     global all_transitions
+     if not all_transitions:
+@@ -1129,7 +1138,7 @@ def get_bools(setype):
+     bools = []
+     domainbools = []
+     domainname, short_name = gen_short_name(setype)
+-    for i in map(lambda x: x['booleans'], filter(lambda x: 'booleans' in x and x['source'] == setype, search([ALLOW, DONTAUDIT]))):
++    for i in map(lambda x: x['booleans'], filter(lambda x: 'booleans' in x and x['source'] == setype, get_all_bool_rules())):
+         for b in i:
+             if not isinstance(b, tuple):
+                 continue
+-- 
+2.37.3
+

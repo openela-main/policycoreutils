@@ -1,0 +1,30 @@
+From c8fbb8042852c18775c001999ce949e9b591e381 Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Wed, 21 Mar 2018 08:51:31 +0100
+Subject: [PATCH] policycoreutils/setfiles: Improve description of -d switch
+
+The "-q" switch is becoming obsolete (completely unused in fedora) and
+debug output ("-d" switch) makes sense in any scenario. Therefore both
+options can be specified at once.
+
+Resolves: rhbz#1271327
+---
+ policycoreutils/setfiles/setfiles.8 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/policycoreutils/setfiles/setfiles.8 b/policycoreutils/setfiles/setfiles.8
+index ccaaf4de..a8a76c86 100644
+--- a/policycoreutils/setfiles/setfiles.8
++++ b/policycoreutils/setfiles/setfiles.8
+@@ -57,7 +57,7 @@ check the validity of the contexts against the specified binary policy.
+ .TP
+ .B \-d
+ show what specification matched each file (do not abort validation
+-after ABORT_ON_ERRORS errors).
++after ABORT_ON_ERRORS errors). Not affected by "\-q"
+ .TP
+ .BI \-e \ directory
+ directory to exclude (repeat option for more than one directory).
+-- 
+2.21.0
+
