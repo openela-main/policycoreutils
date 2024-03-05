@@ -11,7 +11,7 @@
 Summary: SELinux policy core utilities
 Name:    policycoreutils
 Version: 3.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPL-2.0-or-later
 # https://github.com/SELinuxProject/selinux/wiki/Releases
 Source0: https://github.com/SELinuxProject/selinux/releases/download/3.5/selinux-3.5.tar.gz
@@ -23,10 +23,15 @@ Source16: selinux-autorelabel.service
 Source17: selinux-autorelabel-mark.service
 Source18: selinux-autorelabel.target
 Source19: selinux-autorelabel-generator.sh
-Source20: policycoreutils-po.tgz
-Source21: python-po.tgz
-Source22: gui-po.tgz
-Source23: sandbox-po.tgz
+# Drop this when upstream updates translations and the package is rebased
+# wlc --key <apikey> --url https://translate.fedoraproject.org/api/ download selinux/policycoreutils --output ./
+Source20: selinux-policycoreutils.zip
+# wlc --key <apikey> --url https://translate.fedoraproject.org/api/ download selinux/python --output ./
+Source21: selinux-python.zip
+# wlc --key <apikey> --url https://translate.fedoraproject.org/api/ download selinux/gui --output ./
+Source22: selinux-gui.zip
+# wlc --key <apikey> --url https://translate.fedoraproject.org/api/ download selinux/sandbox --output ./
+Source23: selinux-sandbox.zip
 # https://github.com/fedora-selinux/selinux
 # $ git format-patch -N 3.5 -- policycoreutils python gui sandbox dbus semodule-utils restorecond
 # $ for j in [0-9]*.patch; do printf "Patch%s: %s\n" ${j/-*/} $j; done
@@ -95,12 +100,16 @@ tar -xvf %{SOURCE14} -C python/sepolicy/
 # For more information see README.translations
 # First remove old translation files
 rm -f policycoreutils/po/*.po python/po/*.po gui/po/*.po sandbox/po/*.po
-tar -x -f %{SOURCE20} -C policycoreutils -z
-tar -x -f %{SOURCE21} -C python -z
-tar -x -f %{SOURCE22} -C gui -z
-tar -x -f %{SOURCE23} -C sandbox -z
+unzip %{SOURCE20}
+cp -r selinux/policycoreutils/po policycoreutils
+unzip %{SOURCE21}
+cp -r selinux/python/po python
+unzip %{SOURCE22}
+cp -r selinux/gui/po gui
+unzip %{SOURCE23}
+cp -r selinux/sandbox/po sandbox
 
-%build
+%Build
 %set_build_flags
 export PYTHON=%{__python3}
 
@@ -457,6 +466,10 @@ The policycoreutils-restorecond package contains the restorecond service.
 %systemd_postun_with_restart restorecond.service
 
 %changelog
+* Mon Oct 30 2023 Petr Lautrbach <lautrbach@redhat.com> - 3.5-3
+- Update translations
+  https://translate.fedoraproject.org/projects/selinux/
+
 * Tue Jun 27 2023 Petr Lautrbach <lautrbach@redhat.com> - 3.5-2
 - Improve man pages (RHEL-672)
 - Unwrap strings - remove hard returns and initial white spaces from strings (RHEL-606)

@@ -1,2 +1,3 @@
-SOURCES/selinux-3.5.tar.gz
 SOURCES/selinux-autorelabel.target
+SOURCES/selinux-python.zip
+SOURCES/selinux-3.5.tar.gz
