@@ -1,4 +1,4 @@
-From 604a275f53750e4c1e1101bd53c4fd448cc0b5e3 Mon Sep 17 00:00:00 2001
+From 5d257019cb4de4681e60f6e15bf2c1be73275b9c Mon Sep 17 00:00:00 2001
 From: Petr Lautrbach <plautrba@redhat.com>
 Date: Fri, 30 Jul 2021 14:14:37 +0200
 Subject: [PATCH] Use SHA-2 instead of SHA-1
@@ -6,17 +6,14 @@ Content-type: text/plain
 
 The use of SHA-1 in RHEL9 is deprecated
 ---
- policycoreutils/setfiles/restorecon.8          | 10 +++++-----
- policycoreutils/setfiles/restorecon_xattr.8    |  8 ++++----
- policycoreutils/setfiles/restorecon_xattr.c    | 12 ++++++------
- policycoreutils/setfiles/ru/restorecon.8       |  8 ++++----
- policycoreutils/setfiles/ru/restorecon_xattr.8 | 10 +++++-----
- policycoreutils/setfiles/ru/setfiles.8         |  8 ++++----
- policycoreutils/setfiles/setfiles.8            | 10 +++++-----
- 7 files changed, 33 insertions(+), 33 deletions(-)
+ policycoreutils/setfiles/restorecon.8       | 10 +++++-----
+ policycoreutils/setfiles/restorecon_xattr.8 |  8 ++++----
+ policycoreutils/setfiles/restorecon_xattr.c | 12 ++++++------
+ policycoreutils/setfiles/setfiles.8         | 10 +++++-----
+ 4 files changed, 20 insertions(+), 20 deletions(-)
 
 diff --git a/policycoreutils/setfiles/restorecon.8 b/policycoreutils/setfiles/restorecon.8
-index e07db2c87dc4..dbd55ce7c512 100644
+index c3cc5c9b0e52..6160aced5922 100644
 --- a/policycoreutils/setfiles/restorecon.8
 +++ b/policycoreutils/setfiles/restorecon.8
 @@ -95,14 +95,14 @@ display usage information and exit.
@@ -56,7 +53,7 @@ index e07db2c87dc4..dbd55ce7c512 100644
  and provided the
  .B \-n
 diff --git a/policycoreutils/setfiles/restorecon_xattr.8 b/policycoreutils/setfiles/restorecon_xattr.8
-index e04528e60824..4b1ce304d995 100644
+index 51d12a4dbb80..09bfd8c40ab4 100644
 --- a/policycoreutils/setfiles/restorecon_xattr.8
 +++ b/policycoreutils/setfiles/restorecon_xattr.8
 @@ -23,7 +23,7 @@ or
@@ -136,125 +133,8 @@ index 31fb82fd2099..bc22d3fd4560 100644
  		printf("\n");
  	}
  
-diff --git a/policycoreutils/setfiles/ru/restorecon.8 b/policycoreutils/setfiles/ru/restorecon.8
-index 9be3a63db356..745135020f4b 100644
---- a/policycoreutils/setfiles/ru/restorecon.8
-+++ b/policycoreutils/setfiles/ru/restorecon.8
-@@ -82,11 +82,11 @@ restorecon \- восстановить SELinux-контексты безопас
- игнорировать файлы, которые не существуют.
- .TP
- .B \-I
--игнорировать дайджест, чтобы принудительно проверить метки, даже если хранимый дайджест SHA1 соответствует дайджесту SHA1 файлов спецификации. Затем (при условии отсутствия ошибок) дайджест будет обновлён. Более подробные сведения доступны в разделе
-+игнорировать дайджест, чтобы принудительно проверить метки, даже если хранимый дайджест SHA256 соответствует дайджесту SHA256 файлов спецификации. Затем (при условии отсутствия ошибок) дайджест будет обновлён. Более подробные сведения доступны в разделе
- .B ПРИМЕЧАНИЯ.
- .TP
- .B \-D
--установить или обновить дайджесты SHA1 для любых каталогов. Используйте этот параметр, чтобы включить использование расширенного атрибута
-+установить или обновить дайджесты SHA256 для любых каталогов. Используйте этот параметр, чтобы включить использование расширенного атрибута
- .IR security.restorecon_last.
- .TP
- .B \-m
-@@ -159,7 +159,7 @@ GNU
- .B \-D
- команды
- .B restorecon
--обеспечит сохранение дайджеста SHA1 файлов спецификации по умолчанию в расширенном атрибуте с именем
-+обеспечит сохранение дайджеста SHA256 файлов спецификации по умолчанию в расширенном атрибуте с именем
- .IR security.restorecon_last
- для каталогов, указанных в соответствующих путях
- .IR pathname \ ...
-@@ -173,7 +173,7 @@ GNU
- .sp
- Параметр
- .B \-I
--позволяет игнорировать дайджест SHA1 из каждого каталога, указанного в 
-+позволяет игнорировать дайджест SHA256 из каждого каталога, указанного в
- .IR pathname \ ...
- , и, при условии, что НЕ установлен параметр
- .B \-n
-diff --git a/policycoreutils/setfiles/ru/restorecon_xattr.8 b/policycoreutils/setfiles/ru/restorecon_xattr.8
-index 41c441b8c5c2..25c4c3033334 100644
---- a/policycoreutils/setfiles/ru/restorecon_xattr.8
-+++ b/policycoreutils/setfiles/ru/restorecon_xattr.8
-@@ -23,7 +23,7 @@ restorecon_xattr \- управление записями расширенных
- 
- .SH "ОПИСАНИЕ"
- .B restorecon_xattr
--покажет дайджесты SHA1, добавленные в расширенные атрибуты
-+покажет дайджесты SHA256, добавленные в расширенные атрибуты
- .I security.restorecon_last,
- или полностью удалит эти атрибуты. Эти атрибуты устанавливаются командой
- .BR restorecon (8)
-@@ -47,11 +47,11 @@ restorecon_xattr \- управление записями расширенных
- .sp
- По умолчанию
- .B restorecon_xattr
--показывает дайджесты SHA1, добавляя в конце "Match", если они соответствуют установленному по умолчанию файлу спецификации или файлу спецификации
-+показывает дайджесты SHA256, добавляя в конце "Match", если они соответствуют установленному по умолчанию файлу спецификации или файлу спецификации
- .I specfile,
- который установлен с помощью параметра
- .B \-f.
--Несоответствующие дайджесты SHA1 будут показаны с добавлением "No Match" в конце.
-+Несоответствующие дайджесты SHA256 будут показаны с добавлением "No Match" в конце.
- Эту возможность можно отключить с помощью параметра
- .B \-n.
- 
-@@ -81,7 +81,7 @@ restorecon_xattr \- управление записями расширенных
- рекурсивно спускаться по каталогам.
- .TP
- .B \-v
--показать дайджест SHA1, созданный установленным файлом спецификации.
-+показать дайджест SHA256, созданный установленным файлом спецификации.
- .TP
- .B \-e
- .I directory
-@@ -97,7 +97,7 @@ restorecon_xattr \- управление записями расширенных
- .BR file_contexts (5).
- Он будет использоваться
- .BR selabel_open (3)
--для получения набора записей меток; получение дайджеста SHA1 выполняется с помощью
-+для получения набора записей меток; получение дайджеста SHA256 выполняется с помощью
- .BR selabel_digest (3).
- Если этот параметр не указан, будет использоваться файл file_contexts по умолчанию.
- 
-diff --git a/policycoreutils/setfiles/ru/setfiles.8 b/policycoreutils/setfiles/ru/setfiles.8
-index 910101452625..7f2daa09191b 100644
---- a/policycoreutils/setfiles/ru/setfiles.8
-+++ b/policycoreutils/setfiles/ru/setfiles.8
-@@ -69,11 +69,11 @@ setfiles \- установить SELinux-контексты безопаснос
- игнорировать файлы, которые не существуют.
- .TP
- .B \-I
--игнорировать дайджест, чтобы принудительно проверить метки, даже если хранимый дайджест SHA1 соответствует дайджесту SHA1 файлов спецификации. Затем (при условии отсутствия ошибок) дайджест будет обновлён. Более подробные сведения доступны в разделе
-+игнорировать дайджест, чтобы принудительно проверить метки, даже если хранимый дайджест SHA256 соответствует дайджесту SHA256 файлов спецификации. Затем (при условии отсутствия ошибок) дайджест будет обновлён. Более подробные сведения доступны в разделе
- .B ПРИМЕЧАНИЯ.
- .TP
- .B \-D
--установить или обновить дайджесты SHA1 для любых каталогов. Используйте этот параметр, чтобы включить использование расширенного атрибута
-+установить или обновить дайджесты SHA256 для любых каталогов. Используйте этот параметр, чтобы включить использование расширенного атрибута
- .IR security.restorecon_last.
- .TP
- .B \-l
-@@ -186,7 +186,7 @@ GNU
- .B \-D
- команды
- .B setfiles .
--Он обеспечивает сохранение дайджеста SHA1 файла спецификации
-+Он обеспечивает сохранение дайджеста SHA256 файла спецификации
- .B spec_file 
- в расширенном атрибуте с именем
- .IR security.restorecon_last
-@@ -204,7 +204,7 @@ GNU
- .sp
- Параметр
- .B \-I
--позволяет игнорировать дайджест SHA1 из каждого каталога, указанного в 
-+позволяет игнорировать дайджест SHA256 из каждого каталога, указанного в
- .IR pathname \ ...
- , и, при условии, что НЕ установлен параметр
- .B \-n
 diff --git a/policycoreutils/setfiles/setfiles.8 b/policycoreutils/setfiles/setfiles.8
-index bf26e161a71d..36fe6b369548 100644
+index ee01725050bb..57c663a99d67 100644
 --- a/policycoreutils/setfiles/setfiles.8
 +++ b/policycoreutils/setfiles/setfiles.8
 @@ -95,14 +95,14 @@ display usage information and exit.
@@ -294,5 +174,5 @@ index bf26e161a71d..36fe6b369548 100644
  and provided the
  .B \-n
 -- 
-2.39.1
+2.41.0
 

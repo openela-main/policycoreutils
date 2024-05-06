@@ -1,0 +1,62 @@
+From 066b9c9505aa545ea341efc06eb757f2a6000858 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <lautrbach@redhat.com>
+Date: Mon, 13 Nov 2023 13:37:48 +0100
+Subject: [PATCH] Revert "restorecond: Remove the Russian translations"
+Content-type: text/plain
+
+This reverts commit 7021ccd4fbecb8092e2a127944444a8eeb179357.
+---
+ restorecond/ru/restorecond.8 | 41 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 restorecond/ru/restorecond.8
+
+diff --git a/restorecond/ru/restorecond.8 b/restorecond/ru/restorecond.8
+new file mode 100644
+index 000000000000..72d9119950eb
+--- /dev/null
++++ b/restorecond/ru/restorecond.8
+@@ -0,0 +1,41 @@
++.TH "restorecond" "8" "2002031409" "" ""
++.SH "ИМЯ"
++restorecond \- внутренняя служба, которая отслеживает создание файлов и затем задаёт для них SELinux-контекст по умолчанию
++
++.SH "ОБЗОР"
++.B restorecond  [\-d] [-h] [\-f restorecond_file ] [\-u] [\-v]
++.P
++
++.SH "ОПИСАНИЕ"
++Эта страница руководства содержит описание программы
++.BR restorecond.
++.P
++Эта внутренняя служба использует inotify для отслеживания файлов, перечисленных в /etc/selinux/restorecond.conf. После создания этих файлов эта служба обеспечивает присвоение им правильного контекста, связанного с политикой.
++
++.SH "ПАРАМЕТРЫ"
++.TP 
++.B \-d
++Включить режим отладки. Приложение останется на переднем плане, будет показано много отладочных сообщений.
++.TP
++. B \-h
++Вывести сведения об использовании.
++.TP
++.B \-f restorecond_file
++Использовать альтернативный файл restorecond.conf.
++.TP
++.B \-u
++Включить пользовательский режим. Запускает restorecond в сеансе пользователя и выполняет чтение /etc/selinux/restorecond_user.conf. Использует dbus, чтобы удостовериться, что в одном сеансе пользователя запущен только один экземпляр restorecond.
++.TP
++.B \-v
++Включить отладку с подробным выводом. (Сообщать об отсутствующих файлах)
++
++.SH "ФАЙЛЫ"
++/etc/selinux/restorecond.conf
++/etc/selinux/restorecond_user.conf
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR restorecon (8)
++
++.SH "АВТОРЫ"
++Эта man-страница и программа были написаны Dan Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+-- 
+2.41.0
+

@@ -1,4 +1,4 @@
-From f4b78eeb59ae1ef4b5926c004debce04ee28dfe7 Mon Sep 17 00:00:00 2001
+From 8d751d18ea748de141880a726339e4aba4b7a437 Mon Sep 17 00:00:00 2001
 From: Petr Lautrbach <plautrba@redhat.com>
 Date: Wed, 18 Jul 2018 09:09:35 +0200
 Subject: [PATCH] sandbox: Use matchbox-window-manager instead of openbox
@@ -33,17 +33,17 @@ index a2762a7d215a..a32a33ea3cf6 100644
  
          parser.add_option("-l", "--level", dest="level",
 diff --git a/sandbox/sandbox.8 b/sandbox/sandbox.8
-index 1ee0ecea96d1..775e4b231204 100644
+index 095b9e27042d..1c1870190e51 100644
 --- a/sandbox/sandbox.8
 +++ b/sandbox/sandbox.8
 @@ -80,7 +80,7 @@ Specifies the windowsize when creating an X based Sandbox. The default windowsiz
  \fB\-W\fR \fB\-\-windowmanager\fR
- Select alternative window manager to run within 
+ Select alternative window manager to run within
  .B sandbox \-X.
 -Default to /usr/bin/openbox.
 +Default to /usr/bin/matchbox-window-manager.
  .TP
- \fB\-X\fR 
+ \fB\-X\fR
  Create an X based Sandbox for gui apps, temporary files for
 diff --git a/sandbox/sandboxX.sh b/sandbox/sandboxX.sh
 index 4774528027ef..c211ebc14549 100644
@@ -71,5 +71,5 @@ index 4774528027ef..c211ebc14549 100644
      export DISPLAY=:$D
      cat > ~/seremote << __EOF
 -- 
-2.39.1
+2.41.0
 

@@ -1,0 +1,100 @@
+From c22c5bfc40dd572e18352ba418570a12aa335796 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <lautrbach@redhat.com>
+Date: Mon, 13 Nov 2023 13:38:04 +0100
+Subject: [PATCH] Revert "gui: Remove the Russian translations"
+Content-type: text/plain
+
+This reverts commit fb58fa97359c9206bccdb1088f92245d6fa0095e.
+---
+ gui/ru/selinux-polgengui.8     | 35 +++++++++++++++++++++++++++++++++
+ gui/ru/system-config-selinux.8 | 36 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 71 insertions(+)
+ create mode 100644 gui/ru/selinux-polgengui.8
+ create mode 100644 gui/ru/system-config-selinux.8
+
+diff --git a/gui/ru/selinux-polgengui.8 b/gui/ru/selinux-polgengui.8
+new file mode 100644
+index 000000000000..a8e692a64d38
+--- /dev/null
++++ b/gui/ru/selinux-polgengui.8
+@@ -0,0 +1,35 @@
++.TH "selinux-polgengui" "8" "8 апреля 2013" "Руководство по утилитам настройки системы"
++
++.SH ИМЯ
++selinux\-polgengui \- утилита для создания политики SELinux
++
++.SH ОБЗОР
++.B selinux-polgengui
++
++.SH ОПИСАНИЕ
++\fBselinux-polgengui\fP - графическая утилита, которую можно использовать, чтобы создать платформу для сборки политики SELinux.
++.SH ПАРАМЕТРЫ
++Нет
++
++.SH ФАЙЛЫ
++\fi/usr/bin/selinux-polgengui\fP
++
++.SH Примеры
++Чтобы запустить программу, введите:
++
++selinux-polgengui
++
++.PP
++.SH "СМОТРИТЕ ТАКЖЕ"
++.TP
++selinux(1), sepolicy(8), sepolicy-generate(8)
++.PP
++
++.SH СООБЩЕНИЯ ОБ ОШИБКАХ
++Отправляйте сообщения об ошибках по адресу <http://bugzilla.redhat.com>.
++
++.SH ЛИЦЕНЗИЯ И АВТОРЫ
++\fBselinux-polgengui\fP распространяется на условиях Стандартной Общественной Лицензии 
++GNU, авторские права принадлежат Red Hat, Inc.
++.br
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>. Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/gui/ru/system-config-selinux.8 b/gui/ru/system-config-selinux.8
+new file mode 100644
+index 000000000000..0b91a3bd62fc
+--- /dev/null
++++ b/gui/ru/system-config-selinux.8
+@@ -0,0 +1,36 @@
++.TH "system-config-selinux" "8" "8 апреля 2013" "Руководство по утилитам настройки системы"
++
++.SH ИМЯ
++system\-config\-selinux \- утилита для управления SELinux
++
++.SH ОБЗОР
++.B system-config-selinux
++
++.SH ОПИСАНИЕ
++Утилита \fBsystem-config-selinux\fP предоставляет графический интерфейс для управления конфигурацией SELinux.
++
++.SH ПАРАМЕТРЫ
++Нет
++
++.SH ФАЙЛЫ
++\fi/usr/bin/system-config-selinux\fP
++
++.SH Примеры
++Чтобы запустить программу, введите:
++
++system-config-selinux
++
++.PP
++.SH "СМОТРИТЕ ТАКЖЕ"
++.TP
++selinux(1), semanage(8)
++.PP
++
++.SH СООБЩЕНИЯ ОБ ОШИБКАХ
++Отправляйте сообщения об ошибках по адресу <http://bugzilla.redhat.com>.
++
++.SH ЛИЦЕНЗИЯ И АВТОРЫ
++\fBsystem-config-selinux\fP распространяется на условиях Стандартной Общественной Лицензии 
++GNU, авторские права принадлежат Red Hat, Inc.
++.br
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>. Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+-- 
+2.41.0
+

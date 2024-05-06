@@ -1,4 +1,4 @@
-From 1af71ea06bbb57082a627854ec77134428f8fb15 Mon Sep 17 00:00:00 2001
+From 5bd2a3a01ee3b645b5b665be4ef95ddae72806ee Mon Sep 17 00:00:00 2001
 From: Vit Mojzis <vmojzis@redhat.com>
 Date: Tue, 30 May 2023 09:07:28 +0200
 Subject: [PATCH] python/sepolicy: Fix spec file dependencies
@@ -14,7 +14,7 @@ Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
  1 file changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/python/sepolicy/sepolicy/templates/spec.py b/python/sepolicy/sepolicy/templates/spec.py
-index 16a22081b44b..cb3b2f63005b 100644
+index 433c298a17e0..a6d4508bb670 100644
 --- a/python/sepolicy/sepolicy/templates/spec.py
 +++ b/python/sepolicy/sepolicy/templates/spec.py
 @@ -11,18 +11,20 @@ Version:	1.0

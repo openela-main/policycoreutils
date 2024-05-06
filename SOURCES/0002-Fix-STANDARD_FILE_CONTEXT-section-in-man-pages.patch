@@ -1,4 +1,4 @@
-From 837c347bbee5db90d11144363525113edc8baed3 Mon Sep 17 00:00:00 2001
+From 2dade3b4302d6fb6c8abf94227d684ab284216e3 Mon Sep 17 00:00:00 2001
 From: Dan Walsh <dwalsh@redhat.com>
 Date: Mon, 21 Apr 2014 13:54:40 -0400
 Subject: [PATCH] Fix STANDARD_FILE_CONTEXT section in man pages
@@ -10,7 +10,7 @@ Signed-off-by: Miroslav Grepl <mgrepl@redhat.com>
  1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/python/sepolicy/sepolicy/manpage.py b/python/sepolicy/sepolicy/manpage.py
-index a488dcbf54f2..7d90ffb5a22f 100755
+index 629990194f83..b80a408a8f55 100755
 --- a/python/sepolicy/sepolicy/manpage.py
 +++ b/python/sepolicy/sepolicy/manpage.py
 @@ -679,10 +679,13 @@ Default Defined Ports:""")
@@ -43,5 +43,5 @@ index a488dcbf54f2..7d90ffb5a22f 100755
          self.fd.write(r"""
  .I The following file types are defined for %(domainname)s:
 -- 
-2.39.1
+2.41.0
 

@@ -1,0 +1,264 @@
+From a87290f734ba136e7b648a9ce9754767cbb5eed3 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <lautrbach@redhat.com>
+Date: Mon, 13 Nov 2023 13:37:36 +0100
+Subject: [PATCH] Revert "Do not automatically install Russian translations"
+Content-type: text/plain
+
+This reverts commit 14f35fde50cd080650ac3b0136234464a3ea6fbe.
+---
+ gui/Makefile                             | 2 +-
+ policycoreutils/load_policy/Makefile     | 2 +-
+ policycoreutils/man/Makefile             | 2 +-
+ policycoreutils/newrole/Makefile         | 2 +-
+ policycoreutils/run_init/Makefile        | 2 +-
+ policycoreutils/scripts/Makefile         | 2 +-
+ policycoreutils/secon/Makefile           | 2 +-
+ policycoreutils/semodule/Makefile        | 2 +-
+ policycoreutils/sestatus/Makefile        | 2 +-
+ policycoreutils/setfiles/Makefile        | 2 +-
+ policycoreutils/setsebool/Makefile       | 2 +-
+ python/audit2allow/Makefile              | 2 +-
+ python/chcat/Makefile                    | 2 +-
+ python/semanage/Makefile                 | 2 +-
+ python/sepolicy/Makefile                 | 2 +-
+ restorecond/Makefile                     | 2 +-
+ sandbox/Makefile                         | 2 +-
+ semodule-utils/semodule_expand/Makefile  | 2 +-
+ semodule-utils/semodule_link/Makefile    | 2 +-
+ semodule-utils/semodule_package/Makefile | 2 +-
+ 20 files changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/gui/Makefile b/gui/Makefile
+index b29610d41b52..4035fb21b8c9 100644
+--- a/gui/Makefile
++++ b/gui/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ SHAREDIR ?= $(PREFIX)/share/system-config-selinux
+diff --git a/policycoreutils/load_policy/Makefile b/policycoreutils/load_policy/Makefile
+index ad80d500e53c..c1ba805b6a9a 100644
+--- a/policycoreutils/load_policy/Makefile
++++ b/policycoreutils/load_policy/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ SBINDIR ?= $(PREFIX)/sbin
+ MANDIR ?= $(PREFIX)/share/man
+diff --git a/policycoreutils/man/Makefile b/policycoreutils/man/Makefile
+index a4539f243b26..94bbf58652ad 100644
+--- a/policycoreutils/man/Makefile
++++ b/policycoreutils/man/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ MANDIR ?= $(PREFIX)/share/man
+ MAN5DIR ?= $(MANDIR)/man5
+diff --git a/policycoreutils/newrole/Makefile b/policycoreutils/newrole/Makefile
+index 4b8145d35a8b..b3ccf671a9ae 100644
+--- a/policycoreutils/newrole/Makefile
++++ b/policycoreutils/newrole/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/share/man
+diff --git a/policycoreutils/run_init/Makefile b/policycoreutils/run_init/Makefile
+index 619ebc1d7554..e86364a496e6 100644
+--- a/policycoreutils/run_init/Makefile
++++ b/policycoreutils/run_init/Makefile
+@@ -1,6 +1,6 @@
+ 
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ SBINDIR ?= $(PREFIX)/sbin
+ MANDIR ?= $(PREFIX)/share/man
+diff --git a/policycoreutils/scripts/Makefile b/policycoreutils/scripts/Makefile
+index 6d8196c672d6..75e75b80a100 100644
+--- a/policycoreutils/scripts/Makefile
++++ b/policycoreutils/scripts/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ SBINDIR ?= $(PREFIX)/sbin
+ MANDIR ?= $(PREFIX)/share/man
+diff --git a/policycoreutils/secon/Makefile b/policycoreutils/secon/Makefile
+index 440503a14682..576a6203dfa3 100644
+--- a/policycoreutils/secon/Makefile
++++ b/policycoreutils/secon/Makefile
+@@ -1,5 +1,5 @@
+ # secon tool - command-line context
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/share/man
+diff --git a/policycoreutils/semodule/Makefile b/policycoreutils/semodule/Makefile
+index 9fbf99d6177e..73801e487a76 100644
+--- a/policycoreutils/semodule/Makefile
++++ b/policycoreutils/semodule/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ SBINDIR ?= $(PREFIX)/sbin
+ MANDIR = $(PREFIX)/share/man
+diff --git a/policycoreutils/sestatus/Makefile b/policycoreutils/sestatus/Makefile
+index aebf050c2fb9..3dbb792bf5e5 100644
+--- a/policycoreutils/sestatus/Makefile
++++ b/policycoreutils/sestatus/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ SBINDIR ?= $(PREFIX)/sbin
+diff --git a/policycoreutils/setfiles/Makefile b/policycoreutils/setfiles/Makefile
+index 84ffb08bf412..d7670a8ff54b 100644
+--- a/policycoreutils/setfiles/Makefile
++++ b/policycoreutils/setfiles/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ SBINDIR ?= /sbin
+ MANDIR = $(PREFIX)/share/man
+diff --git a/policycoreutils/setsebool/Makefile b/policycoreutils/setsebool/Makefile
+index fc5b4ff63c01..c1440c1c04c8 100644
+--- a/policycoreutils/setsebool/Makefile
++++ b/policycoreutils/setsebool/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ SBINDIR ?= $(PREFIX)/sbin
+ MANDIR = $(PREFIX)/share/man
+diff --git a/python/audit2allow/Makefile b/python/audit2allow/Makefile
+index fb04b8bdc72e..76bf4e37f9a3 100644
+--- a/python/audit2allow/Makefile
++++ b/python/audit2allow/Makefile
+@@ -2,7 +2,7 @@ PYTHON ?= python3
+ SECILC ?= secilc
+ 
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/share/man
+diff --git a/python/chcat/Makefile b/python/chcat/Makefile
+index 7b3ee17f49b1..e4873bf4ff8f 100644
+--- a/python/chcat/Makefile
++++ b/python/chcat/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/share/man
+diff --git a/python/semanage/Makefile b/python/semanage/Makefile
+index 628d135a8606..b53ee33db6ac 100644
+--- a/python/semanage/Makefile
++++ b/python/semanage/Makefile
+@@ -1,7 +1,7 @@
+ PYTHON ?= python3
+ 
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ SBINDIR ?= $(PREFIX)/sbin
+ MANDIR = $(PREFIX)/share/man
+diff --git a/python/sepolicy/Makefile b/python/sepolicy/Makefile
+index 1a26cfdce6cc..4e9e93d0779e 100644
+--- a/python/sepolicy/Makefile
++++ b/python/sepolicy/Makefile
+@@ -1,7 +1,7 @@
+ PYTHON ?= python3
+ 
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/share/man
+diff --git a/restorecond/Makefile b/restorecond/Makefile
+index 1ddfcc9265ce..8e9a5ef1cfa1 100644
+--- a/restorecond/Makefile
++++ b/restorecond/Makefile
+@@ -1,7 +1,7 @@
+ PKG_CONFIG ?= pkg-config
+ 
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ SBINDIR ?= $(PREFIX)/sbin
+ MANDIR = $(PREFIX)/share/man
+diff --git a/sandbox/Makefile b/sandbox/Makefile
+index 360a8bc5c125..84cb5a39bf7e 100644
+--- a/sandbox/Makefile
++++ b/sandbox/Makefile
+@@ -1,7 +1,7 @@
+ PYTHON ?= python3
+ 
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ SYSCONFDIR ?= /etc/sysconfig
+ BINDIR ?= $(PREFIX)/bin
+diff --git a/semodule-utils/semodule_expand/Makefile b/semodule-utils/semodule_expand/Makefile
+index ad776b15166c..e63dcff246d9 100644
+--- a/semodule-utils/semodule_expand/Makefile
++++ b/semodule-utils/semodule_expand/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/share/man
+diff --git a/semodule-utils/semodule_link/Makefile b/semodule-utils/semodule_link/Makefile
+index 936d161cc16f..c5cf69cd9ca3 100644
+--- a/semodule-utils/semodule_link/Makefile
++++ b/semodule-utils/semodule_link/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/share/man
+diff --git a/semodule-utils/semodule_package/Makefile b/semodule-utils/semodule_package/Makefile
+index 6a289f732a7e..680ab836cfe6 100644
+--- a/semodule-utils/semodule_package/Makefile
++++ b/semodule-utils/semodule_package/Makefile
+@@ -1,5 +1,5 @@
+ # Installation directories.
+-LINGUAS ?=
++LINGUAS ?= ru
+ PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ MANDIR ?= $(PREFIX)/share/man
+-- 
+2.41.0
+

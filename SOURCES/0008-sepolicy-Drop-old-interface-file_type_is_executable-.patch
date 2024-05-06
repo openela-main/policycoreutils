@@ -1,4 +1,4 @@
-From b9b94a3254905518f00c4746c0bd712921af31cb Mon Sep 17 00:00:00 2001
+From ada7ed4b14f24086a4d1147fc281ca2d61e744eb Mon Sep 17 00:00:00 2001
 From: Petr Lautrbach <plautrba@redhat.com>
 Date: Mon, 27 Feb 2017 17:12:39 +0100
 Subject: [PATCH] sepolicy: Drop old interface file_type_is_executable(f) and
@@ -12,7 +12,7 @@ Content-type: text/plain
  1 file changed, 20 insertions(+), 2 deletions(-)
 
 diff --git a/python/sepolicy/sepolicy/manpage.py b/python/sepolicy/sepolicy/manpage.py
-index 11809dcede43..543fef6c8d13 100755
+index 70a8ce848900..572c493f6a15 100755
 --- a/python/sepolicy/sepolicy/manpage.py
 +++ b/python/sepolicy/sepolicy/manpage.py
 @@ -127,8 +127,24 @@ def gen_domains():
@@ -60,5 +60,5 @@ index 11809dcede43..543fef6c8d13 100755
                  if f in self.fcdict:
                      mpaths = mpaths + self.fcdict[f]["regex"]
 -- 
-2.39.1
+2.41.0
 

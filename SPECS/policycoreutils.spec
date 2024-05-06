@@ -1,7 +1,7 @@
 %global libauditver     3.0
-%global libsepolver     3.5-1
-%global libsemanagever  3.5-1
-%global libselinuxver   3.5-1
+%global libsepolver     3.6-1
+%global libsemanagever  3.6-1
+%global libselinuxver   3.6-1
 
 %global generatorsdir %{_prefix}/lib/systemd/system-generators
 
@@ -10,11 +10,11 @@
 
 Summary: SELinux policy core utilities
 Name:    policycoreutils
-Version: 3.5
-Release: 3%{?dist}
+Version: 3.6
+Release: 2.1%{?dist}
 License: GPL-2.0-or-later
 # https://github.com/SELinuxProject/selinux/wiki/Releases
-Source0: https://github.com/SELinuxProject/selinux/releases/download/3.5/selinux-3.5.tar.gz
+Source0: https://github.com/SELinuxProject/selinux/releases/download/3.6/selinux-3.6.tar.gz
 URL:     https://github.com/SELinuxProject/selinux
 Source13: system-config-selinux.png
 Source14: sepolicy-icons.tgz
@@ -33,7 +33,7 @@ Source22: selinux-gui.zip
 # wlc --key <apikey> --url https://translate.fedoraproject.org/api/ download selinux/sandbox --output ./
 Source23: selinux-sandbox.zip
 # https://github.com/fedora-selinux/selinux
-# $ git format-patch -N 3.5 -- policycoreutils python gui sandbox dbus semodule-utils restorecond
+# $ git format-patch -N 3.6 -- policycoreutils python gui sandbox dbus semodule-utils restorecond
 # $ for j in [0-9]*.patch; do printf "Patch%s: %s\n" ${j/-*/} $j; done
 # Patch list start
 Patch0001: 0001-sandbox-add-reset-to-Xephyr-as-it-works-better-with-.patch
@@ -44,19 +44,17 @@ Patch0005: 0005-sepolicy-generate-Handle-more-reserved-port-types.patch
 Patch0006: 0006-sandbox-Use-matchbox-window-manager-instead-of-openb.patch
 Patch0007: 0007-Use-SHA-2-instead-of-SHA-1.patch
 Patch0008: 0008-sepolicy-Drop-old-interface-file_type_is_executable-.patch
-Patch0009: 0009-python-chcat-Improve-man-pages.patch
-Patch0010: 0010-python-audit2allow-Add-missing-options-to-man-page.patch
-Patch0011: 0011-python-semanage-Improve-man-pages.patch
-Patch0012: 0012-python-audit2allow-Remove-unused-debug-option.patch
-Patch0013: 0013-policycoreutils-Add-examples-to-man-pages.patch
-Patch0014: 0014-python-sepolicy-Improve-man-pages.patch
-Patch0015: 0015-sandbox-Add-examples-to-man-pages.patch
-Patch0016: 0016-python-sepolicy-Fix-template-for-confined-user-polic.patch
-Patch0017: 0017-python-sepolicy-Fix-spec-file-dependencies.patch
-Patch0018: 0018-python-improve-format-strings-for-proper-localizatio.patch
-Patch0019: 0019-python-Drop-hard-formating-from-localized-strings.patch
-Patch0020: 0020-semanage-Drop-unnecessary-import-from-seobject.patch
-Patch0021: 0021-python-update-python.pot.patch
+Patch0009: 0009-python-sepolicy-Fix-spec-file-dependencies.patch
+Patch0010: 0010-Revert-Do-not-automatically-install-Russian-translat.patch
+Patch0011: 0011-Revert-semodule-utils-Remove-the-Russian-translation.patch
+Patch0012: 0012-Revert-sandbox-Remove-the-Russian-translations.patch
+Patch0013: 0013-Revert-restorecond-Remove-the-Russian-translations.patch
+Patch0014: 0014-Revert-python-Remove-the-Russian-translations.patch
+Patch0015: 0015-Revert-python-Remove-the-Russian-translations.patch
+Patch0016: 0016-Revert-policycoreutils-Remove-the-Russian-translatio.patch
+Patch0017: 0017-Revert-gui-Remove-the-Russian-translations.patch
+Patch0018: 0018-python-semanage-Allow-modifying-records-on-add.patch
+Patch0019: 0019-python-semanage-Do-not-sort-local-fcontext-definitio.patch
 # Patch list end
 Obsoletes: policycoreutils < 2.0.61-2
 Conflicts: filesystem < 3, selinux-policy-base < 3.13.1-138
@@ -466,6 +464,16 @@ The policycoreutils-restorecond package contains the restorecond service.
 %systemd_postun_with_restart restorecond.service
 
 %changelog
+* Mon Feb 19 2024 Petr Lautrbach <lautrbach@redhat.com> - 3.6-2.1
+- semanage: Allow modifying records on "add"
+- semanage: Do not sort local fcontext definitions
+
+* Thu Dec 14 2023 Petr Lautrbach <lautrbach@redhat.com> - 3.6-1
+- SELinux userspace 3.6 release
+
+* Mon Nov 13 2023 Petr Lautrbach <lautrbach@redhat.com> - 3.0-0.rc1.1
+- SELinux userspace 3.6-rc1 release
+
 * Mon Oct 30 2023 Petr Lautrbach <lautrbach@redhat.com> - 3.5-3
 - Update translations
   https://translate.fedoraproject.org/projects/selinux/

@@ -1,0 +1,1325 @@
+From 1bf22c0eacdb662b66102646ab916e25643edfe0 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <lautrbach@redhat.com>
+Date: Mon, 13 Nov 2023 13:37:51 +0100
+Subject: [PATCH] Revert "python: Remove the Russian translations"
+Content-type: text/plain
+
+This reverts commit fda3a45903a66cb1e56e06a79e8a0ca91056726e.
+---
+ python/audit2allow/ru/audit2allow.1      | 210 +++++++++++++++++++++++
+ python/audit2allow/ru/audit2why.1        |   1 +
+ python/chcat/ru/chcat.8                  |  57 ++++++
+ python/semanage/ru/semanage-boolean.8    |  60 +++++++
+ python/semanage/ru/semanage-dontaudit.8  |  32 ++++
+ python/semanage/ru/semanage-export.8     |  36 ++++
+ python/semanage/ru/semanage-fcontext.8   |  84 +++++++++
+ python/semanage/ru/semanage-ibendport.8  |  67 ++++++++
+ python/semanage/ru/semanage-ibpkey.8     |  67 ++++++++
+ python/semanage/ru/semanage-import.8     |  35 ++++
+ python/semanage/ru/semanage-interface.8  |  62 +++++++
+ python/semanage/ru/semanage-login.8      |  67 ++++++++
+ python/semanage/ru/semanage-module.8     |  61 +++++++
+ python/semanage/ru/semanage-node.8       |  59 +++++++
+ python/semanage/ru/semanage-permissive.8 |  47 +++++
+ python/semanage/ru/semanage-port.8       |  69 ++++++++
+ python/semanage/ru/semanage-user.8       |  70 ++++++++
+ python/semanage/ru/semanage.8            |  84 +++++++++
+ 18 files changed, 1168 insertions(+)
+ create mode 100644 python/audit2allow/ru/audit2allow.1
+ create mode 100644 python/audit2allow/ru/audit2why.1
+ create mode 100644 python/chcat/ru/chcat.8
+ create mode 100644 python/semanage/ru/semanage-boolean.8
+ create mode 100644 python/semanage/ru/semanage-dontaudit.8
+ create mode 100644 python/semanage/ru/semanage-export.8
+ create mode 100644 python/semanage/ru/semanage-fcontext.8
+ create mode 100644 python/semanage/ru/semanage-ibendport.8
+ create mode 100644 python/semanage/ru/semanage-ibpkey.8
+ create mode 100644 python/semanage/ru/semanage-import.8
+ create mode 100644 python/semanage/ru/semanage-interface.8
+ create mode 100644 python/semanage/ru/semanage-login.8
+ create mode 100644 python/semanage/ru/semanage-module.8
+ create mode 100644 python/semanage/ru/semanage-node.8
+ create mode 100644 python/semanage/ru/semanage-permissive.8
+ create mode 100644 python/semanage/ru/semanage-port.8
+ create mode 100644 python/semanage/ru/semanage-user.8
+ create mode 100644 python/semanage/ru/semanage.8
+
+diff --git a/python/audit2allow/ru/audit2allow.1 b/python/audit2allow/ru/audit2allow.1
+new file mode 100644
+index 000000000000..b631895d277f
+--- /dev/null
++++ b/python/audit2allow/ru/audit2allow.1
+@@ -0,0 +1,210 @@
++.\" Hey, Emacs! This is an -*- nroff -*- source file.
++.\" Copyright (c) 2005 Manoj Srivastava <srivasta@debian.org>
++.\" Copyright (c) 2010 Dan Walsh <dwalsh@redhat.com>
++.\"
++.\" This is free documentation; you can redistribute it and/or
++.\" modify it under the terms of the GNU General Public License as
++.\" published by the Free Software Foundation; either version 2 of
++.\" the License, or (at your option) any later version.
++.\"
++.\" The GNU General Public License's references to "object code"
++.\" and "executables" are to be interpreted as the output of any
++.\" document formatting or typesetting system, including
++.\" intermediate and printed output.
++.\"
++.\" This manual is distributed in the hope that it will be useful,
++.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
++.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++.\" GNU General Public License for more details.
++.\"
++.\" You should have received a copy of the GNU General Public
++.\" License along with this manual; if not, write to the Free
++.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
++.\" USA.
++.\"
++.\"
++.TH AUDIT2ALLOW "1" "Октябрь 2010" "Security Enhanced Linux"
++.SH ИМЯ
++.BR audit2allow
++\- создаёт правила политики SELinux allow/dontaudit из журналов отклонённых операций
++
++.BR audit2why  
++\- преобразовывает сообщения аудита SELinux в описание причины отказа в доступе (audit2allow \-w)
++
++.SH ОБЗОР
++.B audit2allow
++.RI [ options "] "
++.SH ПАРАМЕТРЫ
++.TP
++.B "\-a" | "\-\-all"
++Прочитать ввод из журнала аудита и сообщений, конфликтует с \-i
++.TP
++.B "\-b" | "\-\-boot"
++Прочитать ввод из сообщений аудита с момента последней загрузки, конфликтует с \-i
++.TP
++.B "\-d" | "\-\-dmesg"
++Прочитать ввод из вывода 
++.I /bin/dmesg.
++Обратите внимание, что с помощью dmesg будут доступны не все сообщения аудита, когда выполняется auditd; в этом случае используйте "ausearch \-m avc | audit2allow" или "\-a".
++.TP
++.B "\-D" | "\-\-dontaudit"
++Создать правила dontaudit (по умолчанию: allow)
++.TP
++.B "\-h" | "\-\-help"
++Вывести краткое сообщение об использовании
++.TP
++.B "\-i  <inputfile>" | "\-\-input <inputfile>"
++Прочитать ввод из 
++.I <inputfile>
++.TP
++.B "\-l" | "\-\-lastreload"
++Прочитать ввод только после последней перезагрузки политики
++.TP
++.B "\-m <modulename>" | "\-\-module <modulename>"
++Создать модуль / запросить вывод <modulename>
++.TP
++.B "\-M <modulename>" 
++Создать загружаемый пакет модуля, конфликтует с \-o
++.TP
++.B "\-p <policyfile>"  | "\-\-policy <policyfile>"
++Файл политики, который следует использовать для анализа
++.TP
++.B "\-o <outputfile>"  | "\-\-output <outputfile>"
++Добавить вывод в конец 
++.I <outputfile>
++.TP
++.B "\-r" | "\-\-requires"
++Создать вывод в синтаксисе загружаемого модуля
++.TP
++.B "\-N" | "\-\-noreference"
++Не создавать эталонную политику, традиционные разрешительные правила.
++Это поведение по умолчанию.
++.TP
++.B "\-R" | "\-\-reference"
++Создать эталонную политику с помощью установленных макросов.
++Будет предпринята попытка сопоставить отказы в доступе с интерфейсами, это сопоставление может быть неправильным.
++.TP
++.B "\-x" | "\-\-xperms"
++Создать расширенные правила вектора доступа для разрешения
++.TP
++.B "\-w" | "\-\-why"
++Преобразовать сообщения аудита SELinux в описание причин отказа в доступе
++
++.TP
++.B "\-v" | "\-\-verbose"
++Включить подробный вывод
++
++.SH ОПИСАНИЕ
++.PP
++Эта утилита ищет в журналах сообщения, которые появляются, когда система не даёт разрешения на операции, и создаёт фрагмент кода правил политики, который (если бы был загружен в политику) мог бы позволить этим операциям успешно завершиться. Однако эта утилита создаёт только разрешительные (allow) правила принудительного присвоения типов. При работе с некоторыми отказами в разрешениях может потребоваться изменить политику как-то иначе, например, добавить атрибут в объявление типа для удовлетворения существующему ограничению, добавить разрешительное правило для роли или изменить ограничение. Утилиту
++.BR audit2why (8) 
++можно использовать для диагностики неясных причин отказов в разрешениях.
++.PP
++Использовать вывод этой утилиты необходимо с осторожностью; убедитесь, что разрешаемые операции не представляют угрозы безопасности. Часто лучше определить новые домены и/или типы или выполнить другие структурные изменения, чтобы разрешить успешное выполнение только оптимальному набору операций, а не вслепую применять иногда слишком обширные изменения, которые рекомендуются утилитой. Некоторые запреты на использование разрешений не вызывают критических ошибок в приложении; в этом случае предпочтительным может быть простое подавление журналирования отказов с помощью правила 'dontaudit', а не использование разрешительного правила 'allow'.
++.PP
++.SH ПРИМЕР
++.nf
++.B ПРИМЕЧАНИЕ: эти примеры относятся к системам, использующим пакет аудита. Если вы 
++.B не используете пакет аудита, сообщения кэша вектора доступа (AVC) будут находиться в каталоге /var/log/messages.
++.B Замените в примерах /var/log/messages на /var/log/audit/audit.log  
++.PP
++.B Использование audit2allow для создания модульной политики
++
++$ cat /var/log/audit/audit.log | audit2allow \-m local > local.te
++$ cat local.te
++module local 1.0;
++
++require {
++        class file {  getattr open read };
++
++
++        type myapp_t;
++        type etc_t;
++ };
++
++
++allow myapp_t etc_t:file { getattr open read };
++<просмотреть local.te и настроить требуемым образом>
++
++.B Использование audit2allow для создания модульной политики с помощью эталонной политики
++
++$ cat /var/log/audit/audit.log | audit2allow \-R \-m local > local.te
++$ cat local.te
++policy_module(local, 1.0)
++
++gen_require(`
++        type myapp_t;
++        type etc_t;
++ };
++
++files_read_etc_files(myapp_t)
++<просмотреть local.te и настроить требуемым образом>
++
++.B Сборка модульной политики с помощью Makefile
++
++# SELinux предоставляет среду разработки политики в
++# /usr/share/selinux/devel, включая все поставляемые
++# файлы интерфейса.
++# Можно создать файл .te и скомпилировать его, выполнив
++
++$ make \-f /usr/share/selinux/devel/Makefile local.pp
++
++
++# Эта команда make скомпилирует файл local.te в текущем
++# каталоге. Если не был указан файл "pp", будут скомпилированы
++# все файлы "te" в текущем каталоге. После компиляции файла
++# .te в файл "pp" его потребуется установить с помощью
++# команды semodule.
++
++$ semodule \-i local.pp
++
++.B Сборка модульной политики вручную
++
++# Скомпилировать модуль
++$ checkmodule \-M \-m \-o local.mod local.te
++
++# Создать пакет 
++$ semodule_package \-o local.pp \-m local.mod
++
++# Загрузить модуль в ядро
++$ semodule \-i local.pp
++
++.B Использование audit2allow для создания и сборки модульной политики
++
++$ cat /var/log/audit/audit.log | audit2allow \-M local
++Создание файла принудительного присвоения типов: local.te
++
++Компиляция политики: checkmodule \-M \-m \-o local.mod local.te
++Сборка пакета: semodule_package \-o local.pp \-m local.mod
++
++******************** ВАЖНО ***********************
++
++Чтобы загрузить созданный пакет политики в ядро, необходимо выполнить
++
++semodule \-i local.pp
++
++.B Использование audit2allow для создания монолитной (не модульной) политики
++
++$ cd /etc/selinux/$SELINUXTYPE/src/policy
++$ cat /var/log/audit/audit.log | audit2allow >> domains/misc/local.te
++$ cat domains/misc/local.te
++allow cupsd_config_t unconfined_t:fifo_file { getattr ioctl };
++<просмотреть domains/misc/local.te и настроить требуемым образом>
++$ make load
++
++.fi
++.PP
++.SH АВТОРЫ
++Эта страница руководства была написана 
++.I Manoj Srivastava <srivasta@debian.org>
++для системы Debian GNU/Linux. Она была обновлена Dan Walsh <dwalsh@redhat.com>.
++.PP
++В разработке утилиты 
++.B audit2allow
++участвовало несколько человек, в том числе 
++.I Justin R. Smith, 
++.I Yuichi Nakamura
++и 
++.I Dan Walsh.
++Перевод на русский язык выполнила
++.I Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/audit2allow/ru/audit2why.1 b/python/audit2allow/ru/audit2why.1
+new file mode 100644
+index 000000000000..a9e88939990c
+--- /dev/null
++++ b/python/audit2allow/ru/audit2why.1
+@@ -0,0 +1 @@
++.so man1/audit2allow.1
+diff --git a/python/chcat/ru/chcat.8 b/python/chcat/ru/chcat.8
+new file mode 100644
+index 000000000000..9a904ff3573c
+--- /dev/null
++++ b/python/chcat/ru/chcat.8
+@@ -0,0 +1,57 @@
++.TH CHCAT "8" "Сентябрь 2005" "chcat" "Команды пользователя"
++.SH ИМЯ
++chcat \- изменить SELinux-категорию безопасности файла
++.SH ОБЗОР
++.B chcat
++\fIcategory file\fR...
++.br
++.B chcat -l 
++\fIcategory user\fR...
++.br
++.B chcat
++\fI[[+|-]category...]  file\fR...
++.br
++.B chcat -l 
++\fI[[+|-]category...]  user\fR...
++.br
++.B chcat
++[\fI-d\fR] \fIfile\fR...
++.br
++.B chcat -l 
++[\fI-d\fR] \fIuser\fR...
++.br
++.B chcat
++\fI-L\fR [ \-l ] [ user ... ]
++.br
++.SH ОПИСАНИЕ
++.PP
++Изменить/Удалить категорию безопасности \fIcategory\fR для каждого файла \fIfile\fR или пользователя \fIuser\fR.
++.PP
++Используйте +/- для добавления/удаления категорий из \fIfile\fR или \fIuser\fR.
++.PP
++.B
++Примечание:
++При удалении категории необходимо указать '\-\-' в командной строке перед использованием синтаксиса \-Category. Это сообщает команде, что вы закончили вводить параметры и теперь указываете имя категории.
++
++.TP
++\fB\-d\fR
++удалить категорию из каждого FILE/USER.
++.TP
++\fB\-L\fR
++вывести список доступных категорий.
++.TP
++\fB\-l\fR
++если используется, chcat будет работать с пользователями, а не с файлами.
++.SH "СМОТРИТЕ ТАКЖЕ"
++.TP
++chcon(1), selinux(8), semanage(8)
++.PP
++.br
++При работе с файлами этот сценарий вызывает команду chcon.
++.SH "FILES"
++/etc/selinux/{SELINUXTYPE}/setrans.conf 
++.br
++/etc/selinux/{SELINUXTYPE}/seusers
++
++.SH "АВТОРЫ"
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>
+diff --git a/python/semanage/ru/semanage-boolean.8 b/python/semanage/ru/semanage-boolean.8
+new file mode 100644
+index 000000000000..cc91e70a56e3
+--- /dev/null
++++ b/python/semanage/ru/semanage-boolean.8
+@@ -0,0 +1,60 @@
++.TH "semanage-boolean" "8" "20130617" "" ""
++.SH "ИМЯ"
++semanage\-boolean \- утилита для управления политикой SELinux, основанная на использовании логических переключателей
++.SH "ОБЗОР"
++.B semanage boolean [\-h] [\-n] [\-N] [\-S STORE] [  \-\-extract  | \-\-deleteall  | \-\-list [\-C] | \-\-modify ( \-\-on | \-\-off ) boolean  ]
++
++.SH "ОПИСАНИЕ"
++Команда semanage используется для настройки определённых элементов политики
++SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команда semanage boolean управляет настройками логических переключателей в политике SELinux. Логические переключатели - это правила if\-then\-else, записанные в политике SELinux. Их можно использовать для настройки того, как правила политики SELinux влияют на ограниченный домен.
++.SH "ПАРАМЕТРЫ"
++.TP
++.I  \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта 
++.TP
++.I  \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I  \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I  \-C, \-\-locallist
++вывести список локальных настроек
++.TP
++.I  \-m, \-\-modify
++изменить запись указанного типа объекта
++.TP
++.I  \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I  \-E, \-\-extract
++извлечь настраиваемые команды для использования в транзакции
++.TP
++.I  \-D, \-\-deleteall
++удалить все локальные настройки
++.TP
++.I  \-1, \-\-on
++включить логический переключатель
++.TP
++.I  \-0, \-\-off
++отключить логический переключатель
++.SH ПРИМЕР
++.nf
++Включить на apache логический переключатель can send mail
++# semanage boolean \-m \-\-on httpd_can_sendmail
++
++Вывести список настраиваемых логических переключателей
++# semanage boolean \-l \-C
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8),
++.BR setsebool (8),
++.BR getsebool (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-dontaudit.8 b/python/semanage/ru/semanage-dontaudit.8
+new file mode 100644
+index 000000000000..4f992ce4e53e
+--- /dev/null
++++ b/python/semanage/ru/semanage-dontaudit.8
+@@ -0,0 +1,32 @@
++.TH "semanage-dontaudit" "8" "20130617" "" ""
++.SH "ИМЯ"
++.B semanage\-dontaudit \- утилита dontaudit для управления политикой SELinux
++.SH "ОБЗОР"
++.B semanage dontaudit [\-h] [\-S STORE] [\-N] {on,off}
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команда semanage dontaudit определяет, будут ли правила dontaudit присутствовать в политике. Авторы политик применяют правила dontaudit для того, чтобы ограниченные приложения использовали альтернативные пути. При использовании правил dontaudit отказы в доступе выполняются, но не журналируются. Иногда использование правил dontaudit вызывает ошибки в приложениях (но авторы политик не знают о них, так как аудит кэша вектора доступа не выполняется). Отключите правила dontaudit с помощью этой команды, чтобы проверить, блокирует ли ядро доступ.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I   \-h, \-\-help
++Показать это справочное сообщение и выйти
++.TP
++.I   \-S STORE, \-\-store STORE
++Выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I   \-N, \-\-noreload
++Не перезагружать политику после фиксации
++
++.SH ПРИМЕР
++.nf
++Отключить правила dontaudit
++# semanage dontaudit off
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-export.8 b/python/semanage/ru/semanage-export.8
+new file mode 100644
+index 000000000000..a4a67e8e6e5b
+--- /dev/null
++++ b/python/semanage/ru/semanage-export.8
+@@ -0,0 +1,36 @@
++.TH "semanage-export" "8" "20130617" "" ""
++.SH "ИМЯ"
++.B semanage\-export \- утилита импорта для управления политикой SELinux
++.SH "ОБЗОР"
++.B semanage export [\-h] [\-S STORE] [\-f OUTPUT_FILE]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команды semanage import и semanage export можно использовать, чтобы извлечь изменения SELinux на одном компьютере и применить их к другому. В файл можно поместить целую группу команд semanage и применить их к компьютеру в одной транзакции.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I  \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I   \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I   \-f OUTPUT_FILE, \-\-output_file OUTPUT_FILE
++выходной файл
++
++.SH ПРИМЕР
++.nf
++Импортировать изменения semanage с другого компьютера
++# semanage export \-f semanage.mods
++# scp semanage.mod remotemachine:
++# ssh remotemachine
++# semanage import \-f semanage.mods
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8),
++.BR semanage-import (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-fcontext.8 b/python/semanage/ru/semanage-fcontext.8
+new file mode 100644
+index 000000000000..243052dac757
+--- /dev/null
++++ b/python/semanage/ru/semanage-fcontext.8
+@@ -0,0 +1,84 @@
++.TH "semanage-fcontext" "8" "20130617" "" ""
++.SH "ИМЯ"
++semanage\-fcontext \- утилита для управления политикой SELinux, предназначенная для работы с контекстами файлов
++
++.SH "ОБЗОР"
++.B semanage fcontext [\-h] [\-n] [\-N] [\-S STORE] [ \-\-add ( \-t TYPE \-f FTYPE \-r RANGE \-s SEUSER | \-e EQUAL ) FILE_SPEC ) | \-\-delete ( \-t TYPE \-f FTYPE | \-e EQUAL ) FILE_SPEC ) | \-\-deleteall  | \-\-extract  | \-\-list [\-C] | \-\-modify ( \-t TYPE \-f FTYPE \-r RANGE \-s SEUSER | \-e EQUAL ) FILE_SPEC ) ]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команда semanage fcontext используется для управления проставлением меток по умолчанию в файловой системе в системе SELinux. Эта команда с помощью регулярных выражений сопоставляет пути файлов с метками SELinux.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I  \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I   \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта
++.TP
++.I   \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I   \-C, \-\-locallist
++вывести список локальных настроек
++.TP
++.I   \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I   \-a, \-\-add
++добавить запись указанного типа объекта
++.TP
++.I   \-d, \-\-delete
++удалить запись указанного типа объекта
++.TP
++.I   \-m, \-\-modify
++изменить запись указанного типа объекта
++.TP
++.I   \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I   \-E, \-\-extract
++извлечь настраиваемые команды для использования в транзакции
++.TP
++.I   \-D, \-\-deleteall
++удалить все локальные настройки
++.TP
++.I   \-e EQUAL, \-\-equal EQUAL
++Заменить путь к цели на путь к источнику при создании меток по умолчанию. Используется с fcontext. Необходимы аргументы путей к источнику и цели. Для целевого поддерева метки контекста будут проставляться тем же образом, который задан для источника.
++.TP
++.I   \-f [{a,f,d,c,b,s,l,p}], \-\-ftype [{a,f,d,c,b,s,l,p}]
++Тип файла. Используется с fcontext. Требуется тип файла (показывается в поле режима по команде ls); например, используйте 'd' для соответствия только каталогам или 'f' для соответствия только обычным файлам. Могут передаваться следующие параметры типа файла: f (обычный файл), d (каталог), c (устройство символьного ввода-вывода), b (устройство блочного ввода-вывода), s (сокет), l (символическая ссылка), p (именованный канал). Если вы не укажете тип файла, по умолчанию будет установлен тип "all files" (все файлы).
++
++.TP
++.I   \-s SEUSER, \-\-seuser SEUSER
++имя пользователя SELinux
++.TP
++.I   \-t TYPE, \-\-type TYPE
++SELinux-тип для объекта
++.TP
++.I   \-r RANGE, \-\-range RANGE
++диапазон безопасности MLS/MCS (только для систем с поддержкой MLS/MCS). По умолчанию SELinux-диапазон для сопоставления имени входа SELinux принимает значение диапазона записи пользователя SELinux. По умолчанию SELinux-диапазон для пользователя SELinux принимает значение s0.
++
++.SH ПРИМЕР
++.nf
++.I выполните restorecon после установки контекста файлов
++Добавьте контекст файлов для всего, что находится в /web
++# semanage fcontext \-a \-t httpd_sys_content_t "/web(/.*)?"
++# restorecon \-R \-v /web
++
++Замените /home1 на /home при установке контекста файлов
++# semanage fcontext \-a \-e /home /home1
++# restorecon \-R \-v /home1
++
++Выполните следующие команды для домашних каталогов, находящихся ниже каталога верхнего уровня, например /disk6/home
++# semanage fcontext \-a \-t home_root_t "/disk6"
++# semanage fcontext \-a \-e /home /disk6/home
++# restorecon \-R \-v /disk6
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-ibendport.8 b/python/semanage/ru/semanage-ibendport.8
+new file mode 100644
+index 000000000000..41c6d7e6e2b2
+--- /dev/null
++++ b/python/semanage/ru/semanage-ibendport.8
+@@ -0,0 +1,67 @@
++.TH "semanage-ibendport" "8" "20170508" "" ""
++.SH "ИМЯ"
++.B semanage\-ibendport \- утилита для управления политикой SELinux, предназначенная для сопоставления конечных портов infiniband
++.SH "ОБЗОР"
++.B semanage ibendport [\-h] [\-n] [\-N] [\-S STORE] [ \-\-add \-t TYPE \-z IBDEV_NAME \-r RANGE port | \-\-delete \-z IBDEV_NAME port | \-\-deleteall  | \-\-extract  | \-\-list [\-C] | \-\-modify \-t TYPE \-z IBDEV_NAME \-r RANGE port ]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. semanage ibendport управляет определениями типов ibendport для номеров ibendport.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I  \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I   \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта
++.TP
++.I   \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I   \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I   \-C, \-\-locallist
++вывести список локальных настроек
++.TP
++.I   \-a, \-\-add
++добавить запись указанного типа объекта
++.TP
++.I   \-d, \-\-delete
++удалить запись указанного типа объекта
++.TP
++.I   \-m, \-\-modify
++изменить запись указанного типа объекта
++.TP
++.I   \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I   \-E, \-\-extract
++извлечь настраиваемые команды для использования в транзакции
++.TP
++.I   \-D, \-\-deleteall
++удалить все локальные настройки
++.TP
++.I   \-t TYPE, \-\-type TYPE
++SELinux-тип для объекта
++.TP
++.I   \-r RANGE, \-\-range RANGE
++диапазон безопасности MLS/MCS (только для систем с поддержкой MLS/MCS). По умолчанию SELinux-диапазон для сопоставления имени входа SELinux принимает значение диапазона записи пользователя SELinux. По умолчанию SELinux-диапазон для пользователя SELinux принимает значение s0.
++.TP
++.I \-z IBDEV_NAME, \-\-ibdev_name IBDEV_NAME
++Имя устройства infiniband для порта, для которого следует проставить метку.  (например, mlx5_0)
++
++.SH ПРИМЕР
++.nf
++Вывести список всех определений ibendport
++# semanage ibendport \-l
++Проставить метку 'устройство mlx4_0 порт 2'
++# semanage ibendport \-a \-t allowed_ibendport_t \-z mlx4_0 2
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Jurgens <danielj@mellanox.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-ibpkey.8 b/python/semanage/ru/semanage-ibpkey.8
+new file mode 100644
+index 000000000000..846d553201df
+--- /dev/null
++++ b/python/semanage/ru/semanage-ibpkey.8
+@@ -0,0 +1,67 @@
++.TH "semanage-ibpkey" "8" "20170508" "" ""
++.SH "ИМЯ"
++.B semanage\-ibpkey \- утилита для управления политикой SELinux, предназначенная для сопоставления ключей разделов infiniband
++.SH "ОБЗОР"
++.B semanage ibpkey [\-h] [\-n] [\-N] [\-S STORE] [ \-\-add \-t TYPE \-x SUBNET_PREFIX \-r RANGE ibpkey_name | ibpkey_range | \-\-delete \-x SUBNET_PREFIX ibpkey_name | ibpkey_range | \-\-deleteall  | \-\-extract  | \-\-list [\-C] | \-\-modify \-t TYPE \-x SUBNET_PREFIX \-r RANGE ibpkey_name | ibpkey_range ]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команда semanage ibpkey управляет определениями типов ibpkey для номеров ibpkey.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I  \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I   \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта
++.TP
++.I   \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I   \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I   \-C, \-\-locallist
++вывести список локальных настроек
++.TP
++.I   \-a, \-\-add
++добавить запись указанного типа объекта
++.TP
++.I   \-d, \-\-delete
++удалить запись указанного типа объекта
++.TP
++.I   \-m, \-\-modify
++изменить запись указанного типа объекта
++.TP
++.I   \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I   \-E, \-\-extract
++извлечь настраиваемые команды для использования в транзакции
++.TP
++.I   \-D, \-\-deleteall
++удалить все локальные настройки
++.TP
++.I   \-t TYPE, \-\-type TYPE
++SELinux-тип для объекта
++.TP
++.I   \-r RANGE, \-\-range RANGE
++диапазон безопасности MLS/MCS (только для систем с поддержкой MLS/MCS). По умолчанию SELinux-диапазон для сопоставления имени входа SELinux принимает значение диапазона записи пользователя SELinux. По умолчанию SELinux-диапазон для пользователя SELinux принимает значение s0.
++.TP
++.I \-x SUBNET_PREFIX, \-\-subnet_prefix SUBNET_PREFIX
++Префикс подсети для указанного ключа раздела (pkey) или диапазона ключей раздела.
++
++.SH ПРИМЕР
++.nf
++Вывести список всех определений ibpkey
++# semanage ibpkey \-l
++Отметить pkey 0x8FFF (pkey ограниченного участия по умолчанию) как тип pkey по умолчанию
++# semanage ibpkey \-a \-t default_ibpkey_t \-x fe80:: 0x8FFF
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Jurgens <danielj@mellanox.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-import.8 b/python/semanage/ru/semanage-import.8
+new file mode 100644
+index 000000000000..b374c41d53b1
+--- /dev/null
++++ b/python/semanage/ru/semanage-import.8
+@@ -0,0 +1,35 @@
++.TH "semanage-import" "8" "20130617" "" ""
++.SH "ИМЯ"
++.B semanage\-import \- утилита импорта для управления политикой SELinux
++.SH "ОБЗОР"
++.B semanage import [\-h] [\-N] [\-S STORE] [\-f INPUT_FILE]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команды semanage import и semanage export можно использовать, чтобы извлечь изменения SELinux на одном компьютере и применить их к другому. В файл можно поместить целую группу команд semanage и применить их к компьютеру в одной транзакции.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I  \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I   \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I   \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I   \-f INPUT_FILE, \-\-input_file INPUT_FILE
++входной файл
++.SH ПРИМЕР
++.nf
++Импортировать изменения semanage с другого компьютера
++# semanage import \-f semanage.mods
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.B selinux (8),
++.B semanage (8),
++.B semanage-export (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-interface.8 b/python/semanage/ru/semanage-interface.8
+new file mode 100644
+index 000000000000..62308f397246
+--- /dev/null
++++ b/python/semanage/ru/semanage-interface.8
+@@ -0,0 +1,62 @@
++.TH "semanage-interface" "8" "20130617" "" ""
++.SH "ИМЯ"
++.B semanage\-interface \- утилита для управления политикой SELinux, предназначенная для работы с сетевыми интерфейсами
++.SH "ОБЗОР"
++.B semanage interface [\-h] [\-n] [\-N] [\-S STORE] [ \-\-add \-t TYPE \-r RANGE interface | \-\-delete interface | \-\-deleteall  | \-\-extract  | \-\-list [\-C] | \-\-modify \-t TYPE \-r RANGE interface ]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команда semanage interface управляет метками, которые назначаются сетевым интерфейсам.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I  \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта
++.TP
++.I  \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I  \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I  \-C, \-\-locallist
++вывести список локальных настроек
++.TP
++.I  \-a, \-\-add
++добавить запись указанного типа объекта
++.TP
++.I  \-d, \-\-delete
++удалить запись указанного типа объекта
++.TP
++.I  \-m, \-\-modify
++изменить запись указанного типа объекта
++.TP
++.I  \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I  \-E, \-\-extract
++извлечь настраиваемые команды для использования в транзакции
++.TP
++.I  \-D, \-\-deleteall
++удалить все локальные настройки
++.TP
++.I  \-t TYPE, \-\-type TYPE
++SELinux-тип для объекта
++.TP
++.I \-r RANGE, \-\-range RANGE
++диапазон безопасности MLS/MCS (только для систем с поддержкой MLS/MCS). По умолчанию SELinux-диапазон для сопоставления имени входа SELinux принимает значение диапазона записи пользователя SELinux. По умолчанию SELinux-диапазон для пользователя SELinux принимает значение s0.
++
++.SH ПРИМЕР
++.nf
++Вывести список всех определений интерфейсов
++# semanage interface \-l
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8)
++
++.SH "AUTHOR"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-login.8 b/python/semanage/ru/semanage-login.8
+new file mode 100644
+index 000000000000..47bd2193c691
+--- /dev/null
++++ b/python/semanage/ru/semanage-login.8
+@@ -0,0 +1,67 @@
++.TH "semanage-login" "8" "20130617" "" ""
++.SH "ИМЯ"
++.B semanage\-login \- утилита для управления политикой SELinux, предназначенная для сопоставления пользователей Linux с пользователями SELinux
++.SH "ОБЗОР"
++.B semanage login [\-h] [\-n] [\-N] [\-S STORE] [ \-\-add \-s SEUSER \-r RANGE LOGIN | \-\-delete LOGIN | \-\-deleteall  | \-\-extract  | \-\-list [\-C] | \-\-modify \-s SEUSER \-r RANGE LOGIN ]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команда semanage login управляет сопоставлением пользователей Linux с пользователями SELinux. Её можно использовать для включения ограниченных пользователей. Например, можно определить, что конкретный пользователь или группа пользователей будет входить в систему как пользователь user_u. Чтобы указать имя группы, поставьте перед ним знак '%'.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I  \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I  \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта
++.TP
++.I  \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I  \-C, \-\-locallist
++вывести список локальных настроек
++.TP
++.I  \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I  \-a, \-\-add
++добавить запись указанного типа объекта
++.TP
++.I  \-d, \-\-delete
++удалить запись указанного типа объекта
++.TP
++.I \-m, \-\-modify
++изменить запись указанного типа объекта
++.TP
++.I  \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I  \-E, \-\-extract
++извлечь настраиваемые команды для использования в транзакции
++.TP
++.I  \-D, \-\-deleteall
++удалить все локальные настройки
++.TP
++.I  \-s SEUSER, \-\-seuser SEUSER
++имя пользователя SELinux
++.TP
++.I  \-r RANGE, \-\-range RANGE
++диапазон безопасности MLS/MCS (только для систем с поддержкой MLS/MCS). По умолчанию SELinux-диапазон для сопоставления имени входа SELinux принимает значение диапазона записи пользователя SELinux. По умолчанию SELinux-диапазон для пользователя SELinux принимает значение s0.
++
++.SH ПРИМЕР
++.nf
++Изменить пользователя по умолчанию в системе на пользователя guest_u
++# semanage login \-m \-s guest_u __default__
++Назначить пользователю gijoe на компьютере с поддержкой MLS диапазон и пользователя staff_u
++# semanage login \-a \-s staff_u \-rSystemLow-Secret gijoe
++Назначить всем пользователям в группе engineering пользователя staff_u
++# semanage login \-a \-s staff_u %engineering
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8),
++.BR semanage-user (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-module.8 b/python/semanage/ru/semanage-module.8
+new file mode 100644
+index 000000000000..2d8666d6c6f9
+--- /dev/null
++++ b/python/semanage/ru/semanage-module.8
+@@ -0,0 +1,61 @@
++.TH "semanage-module" "8" "20130617" "" ""
++.SH "ИМЯ"
++.B semanage\-module \- утилита для управления политикой SELinux, предназначенная для сопоставления модулей 
++.SH "ОБЗОР"
++.B semanage module [\-h] [\-n] [\-N] [\-S STORE] (\-a | \-r | \-e | \-d | \-\-extract | \-\-list [\-C] | \-\-deleteall) [module_name]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команда semanage module позволяет устанавливать, удалять, отключать модули политики SELinux.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I  \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I   \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта
++.TP
++.I   \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I   \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I   \-a, \-\-add
++установить указанный модуль
++.TP
++.I   \-r, \-\-remove
++удалить указанный модуль
++.TP
++.I   \-d \-\-disable
++отключить указанный модуль
++.TP
++.I   \-e \-\-enable
++включить указанный модуль
++.TP
++.I   \-E, \-\-extract
++извлечь настраиваемые команды для использования в транзакции
++.TP
++.I   \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I   \-C, \-\-locallist
++вывести список локальных настроек
++
++.SH ПРИМЕР
++.nf
++Вывести список всех модулей
++# semanage module \-l
++Отключить неограниченный модуль (unconfined)
++# semanage module \-\-disable unconfined
++Установить пользовательский модуль политики apache
++# semanage module \-a myapache
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8),
++.BR semodule (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-node.8 b/python/semanage/ru/semanage-node.8
+new file mode 100644
+index 000000000000..1e89eed9c380
+--- /dev/null
++++ b/python/semanage/ru/semanage-node.8
+@@ -0,0 +1,59 @@
++.TH "semanage-node" "8" "20130617" "" ""
++.SH "ИМЯ"
++.B semanage\-node \- утилита для управления политикой SELinux, предназначенная для сопоставления узлов
++.SH "ОБЗОР"
++.B semanage node [\-h] [\-n] [\-N] [\-S STORE] [ \-\-add \-M NETMASK \-p PROTOCOL \-t TYPE \-r RANGE node | \-\-delete \-M NETMASK \-p PROTOCOL node | \-\-deleteall  | \-\-extract  | \-\-list [\-C] | \-\-modify \-M NETMASK \-p PROTOCOL \-t TYPE \-r RANGE node ]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команда semanage node управляет определениями типов узлов для IP-адресов.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I   \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта
++.TP
++.I   \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I   \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I   \-C, \-\-locallist
++вывести список локальных настроек
++.TP
++.I   \-a, \-\-add
++добавить запись указанного типа объекта
++.TP
++.I   \-d, \-\-delete
++удалить запись указанного типа объекта
++.TP
++.I   \-m, \-\-modify
++изменить запись указанного типа объекта
++.TP
++.I   \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I   \-E, \-\-extract
++извлечь настраиваемые команды для использования в транзакции
++.TP
++.I   \-D, \-\-deleteall
++удалить все локальные настройки
++.TP
++.I   \-M NETMASK, \-\-netmask NETMASK
++маска сети
++.TP
++.I   \-t TYPE, \-\-type TYPE
++SELinux-тип для объекта
++.TP
++.I   \-r RANGE, \-\-range RANGE
++диапазон безопасности MLS/MCS (только для систем с поддержкой MLS/MCS). По умолчанию SELinux-диапазон для сопоставления имени входа SELinux принимает значение диапазона записи пользователя SELinux. По умолчанию SELinux-диапазон для пользователя SELinux принимает значение s0.
++.TP
++.I   \-p PROTO, \-\-proto PROTO
++
++Протокол для указанного порта (tcp|udp) или версия протокола Интернета для указанного узла (ipv4|ipv6).
++
++.SH "АВТОРЫ"
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>
+diff --git a/python/semanage/ru/semanage-permissive.8 b/python/semanage/ru/semanage-permissive.8
+new file mode 100644
+index 000000000000..2fe8e013daca
+--- /dev/null
++++ b/python/semanage/ru/semanage-permissive.8
+@@ -0,0 +1,47 @@
++.TH "semanage-permissive" "8" "20130617" "" ""
++.SH "ИМЯ"
++.B semanage\-permissive \- утилита разрешительного сопоставления для управления политикой SELinux
++.SH "ОБЗОР"
++.B semanage permissive [\-h] (\-a | \-d | \-l) [\-n] [\-N] [\-S STORE] [type]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Утилита semanage permissive позволяет добавить или удалить разрешительный модуль политики SELinux.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I  \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I   \-a, \-\-add
++добавить запись указанного типа объекта
++.TP
++.I   \-d, \-\-delete
++удалить запись указанного типа объекта
++.TP
++.I   \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I   \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта
++.TP
++.I   \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I   \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++
++.SH ПРИМЕР
++.nf
++Вывести список всех разрешительных модулей
++# semanage permissive \-l
++Сделать httpd_t (веб-сервер) разрешительным доменом
++# semanage permissive \-a httpd_t
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-port.8 b/python/semanage/ru/semanage-port.8
+new file mode 100644
+index 000000000000..d0143466d233
+--- /dev/null
++++ b/python/semanage/ru/semanage-port.8
+@@ -0,0 +1,69 @@
++.TH "semanage-port" "8" "20130617" "" ""
++.SH "ИМЯ"
++.B semanage\-port \- средство сопоставления портов для управления политикой SELinux
++.SH "ОБЗОР"
++.B semanage port [\-h] [\-n] [\-N] [\-S STORE] [ \-\-add \-t TYPE \-p PROTOCOL \-r RANGE port_name | port_range | \-\-delete \-p PROTOCOL port_name | port_range | \-\-deleteall  | \-\-extract  | \-\-list [\-C] | \-\-modify \-t TYPE \-p PROTOCOL \-r RANGE port_name | port_range ]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команда semanage port управляет определениями типов портов для номеров портов.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I  \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I   \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта
++.TP
++.I   \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I   \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I   \-C, \-\-locallist
++вывести список локальных настроек
++.TP
++.I   \-a, \-\-add
++добавить запись указанного типа объекта
++.TP
++.I   \-d, \-\-delete
++удалить запись указанного типа объекта
++.TP
++.I   \-m, \-\-modify
++изменить запись указанного типа объекта
++.TP
++.I   \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I   \-E, \-\-extract
++извлечь настраиваемые команды для использования в транзакции
++.TP
++.I   \-D, \-\-deleteall
++удалить все локальные настройки
++.TP
++.I   \-t TYPE, \-\-type TYPE
++SELinux-тип для объекта
++.TP
++.I   \-r RANGE, \-\-range RANGE
++диапазон безопасности MLS/MCS (только для систем с поддержкой MLS/MCS). По умолчанию SELinux-диапазон для сопоставления имени входа SELinux принимает значение диапазона записи пользователя SELinux. По умолчанию SELinux-диапазон для пользователя SELinux принимает значение s0.
++.TP
++.I   \-p PROTO, \-\-proto PROTO
++Протокол для указанного порта (tcp|udp) или версия протокола Интернета для указанного узла (ipv4|ipv6).
++
++.SH ПРИМЕР
++.nf
++Вывести список всех определений портов
++# semanage port \-l
++Разрешить Apache прослушивать tcp-порт 81
++# semanage port \-a \-t http_port_t \-p tcp 81
++Разрешить sshd прослушивать tcp-порт 8991
++# semanage port \-a \-t ssh_port_t \-p tcp 8991
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage-user.8 b/python/semanage/ru/semanage-user.8
+new file mode 100644
+index 000000000000..06e3fa8a4c78
+--- /dev/null
++++ b/python/semanage/ru/semanage-user.8
+@@ -0,0 +1,70 @@
++.TH "semanage-user" "8" "20130617" "" ""
++.SH "ИМЯ"
++.B semanage\-user \- утилита для управления политикой SELinux, предназначенная для сопоставления пользователей
++.SH "ОБЗОР"
++.B  semanage user [\-h] [\-n] [\-N] [\-S STORE] [ \-\-add ( \-L LEVEL \-R ROLES \-r RANGE SEUSER) | \-\-delete SEUSER | \-\-deleteall  | \-\-extract  | \-\-list [\-C] | \-\-modify ( \-L LEVEL \-R ROLES \-r RANGE SEUSER ) ]
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Команда semanage user управляет сопоставлением пользователей SELinux с ролями и уровнями MLS/MCS.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I   \-h, \-\-help
++показать это справочное сообщение и выйти
++.TP
++.I   \-n, \-\-noheading
++не показывать заголовок при выводе указанного типа объекта
++.TP
++.I   \-N, \-\-noreload
++не перезагружать политику после фиксации
++.TP
++.I   \-S STORE, \-\-store STORE
++выбрать для управления альтернативное хранилище политики SELinux
++.TP
++.I   \-C, \-\-locallist
++вывести список локальных настроек
++.TP
++.I   \-a, \-\-add
++добавить запись указанного типа объекта
++.TP
++.I   \-d, \-\-delete
++удалить запись указанного типа объекта
++.TP
++.I   \-m, \-\-modify
++изменить запись указанного типа объекта
++.TP
++.I   \-l, \-\-list
++вывести список записей указанного типа объекта
++.TP
++.I   \-E, \-\-extract
++извлечь настраиваемые команды для использования в транзакции
++.TP
++.I   \-D, \-\-deleteall
++удалить все локальные настройки
++.TP
++.I   \-L LEVEL, \-\-level LEVEL
++уровень SELinux по умолчанию для пользователя SELinux, s0 (только для систем с поддержкой MLS/MCS)
++.TP
++.I   \-r RANGE, \-\-range RANGE
++диапазон безопасности MLS/MCS (только для систем с поддержкой MLS/MCS). По умолчанию SELinux-диапазон для сопоставления имени входа SELinux принимает значение диапазона записи пользователя SELinux. По умолчанию SELinux-диапазон для пользователя SELinux принимает значение s0.
++.TP
++.I   \-R [ROLES], \-\-roles [ROLES]
++роли SELinux. Если ролей несколько, их необходимо перечислить через пробелы и заключить этот перечень в кавычки. Или можно несколько раз указать \-R.
++
++.SH ПРИМЕР
++.nf
++Вывести список пользователей SELinux
++# semanage user \-l
++Изменить группы для пользователя staff_u
++# semanage user \-m \-R "system_r unconfined_r staff_r" staff_u
++Добавить уровень для пользователей TopSecret
++# semanage user \-a \-R "staff_r" \-rs0\-TopSecret topsecret_u
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage (8),
++.BR semanage\-login (8)
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>.
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+diff --git a/python/semanage/ru/semanage.8 b/python/semanage/ru/semanage.8
+new file mode 100644
+index 000000000000..f88568ee95bb
+--- /dev/null
++++ b/python/semanage/ru/semanage.8
+@@ -0,0 +1,84 @@
++.TH "semanage" "8" "20100223" "" ""
++.SH "ИМЯ"
++semanage \- средство управления политикой SELinux
++
++.SH "ОБЗОР"
++.B semanage                {import,export,login,user,port,interface,module,node,fcontext,boolean,permissive,dontaudit,ibpkey,ibendport}
++                ...
++.B позиционные аргументы:
++
++.B    import
++Импортировать локальные настройки
++
++.B    export
++Экспортировать локальные настройки
++
++.B    login
++Управлять сопоставлениями имён входа между пользователями Linux и ограниченными пользователями SELinux
++
++.B    user
++Управлять ограниченными пользователями SELinux (роли и уровни для пользователя SELinux)
++
++.B    port
++Управлять определениями типов сетевых портов
++
++.B    interface
++Управлять определениями типов сетевых интерфейсов
++
++.B    module
++Управлять модулями политики SELinux
++
++.B    node
++Управлять определениями типов сетевых узлов
++
++.B    fcontext
++Управлять определениями соответствий контекстов файлов
++
++.B    boolean
++Управлять логическими переключателями для избирательного включения функциональности
++
++.B    permissive
++Управлять режимом принудительного назначения типов процессов
++
++.B    dontaudit
++Отключить/Включить правила dontaudit в политике
++
++.B    ibpkey
++Управлять определениями типов ключей разделов infiniband
++
++.B    ibendport
++Управлять определениями типов конечных портов infiniband
++
++.SH "ОПИСАНИЕ"
++semanage используется для настройки определённых элементов политики SELinux без необходимости изменения или перекомпиляции исходного текста политики. Это включает сопоставление имён пользователей Linux с пользователями SELinux (что управляет исходным контекстом безопасности, который присваивается пользователям Linux при их входе в систему, и ограничивает доступный им набор ролей). Также это включает сопоставление контекстов безопасности для различных видов объектов, таких как сетевые порты, интерфейсы, ключи разделов (pkeys) и конечные порты (endports) infiniband, сетевые узлы (хосты), а также сопоставление контекстов файлов. Обратите внимание, что при вызове команды semanage login пользователи Linux (logins) сопоставляются с пользователями SELinux, а при вызове команды semanage user пользователи SELinux сопоставляются с доступными наборами ролей. В большинстве случаев администратору требуется настроить только первый тип сопоставлений; второй тип сопоставлений определяется базовой политикой и обычно не требует изменения.
++
++.SH "ПАРАМЕТРЫ"
++.TP
++.I                \-h, \-\-help
++Вывести справочную информацию
++
++.SH "СМОТРИТЕ ТАКЖЕ"
++.BR selinux (8),
++.BR semanage-boolean (8),
++.BR semanage-dontaudit (8),
++.BR semanage-export (8),
++.BR semanage-fcontext (8),
++.BR semanage-import (8),
++.BR semanage-interface (8),
++.BR semanage-login (8),
++.BR semanage-module (8),
++.BR semanage-node (8),
++.BR semanage-permissive (8),
++.BR semanage-port (8),
++.BR semanage-user (8)
++.BR semanage-ibkey (8),
++.BR semanage-ibendport (8),
++
++.SH "АВТОРЫ"
++Эта man-страница была написана Daniel Walsh <dwalsh@redhat.com>
++.br
++и Russell Coker <rcoker@redhat.com>.
++.br
++Примеры подготовлены Thomas Bleher <ThomasBleher@gmx.de>.
++usage: semanage [\-h]
++Перевод на русский язык выполнила Герасименко Олеся <gammaray@basealt.ru>.
+-- 
+2.41.0
+

@@ -1,4 +1,4 @@
-From f21d5f9316094015c81339d25d69d3dc7150bd8a Mon Sep 17 00:00:00 2001
+From 91eebedb3f2af184720bf77f64133a9a2e0dc453 Mon Sep 17 00:00:00 2001
 From: Miroslav Grepl <mgrepl@redhat.com>
 Date: Mon, 12 May 2014 14:11:22 +0200
 Subject: [PATCH] If there is no executable we don't want to print a part of
@@ -10,7 +10,7 @@ Content-type: text/plain
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/python/sepolicy/sepolicy/manpage.py b/python/sepolicy/sepolicy/manpage.py
-index 7d90ffb5a22f..11809dcede43 100755
+index b80a408a8f55..70a8ce848900 100755
 --- a/python/sepolicy/sepolicy/manpage.py
 +++ b/python/sepolicy/sepolicy/manpage.py
 @@ -737,7 +737,8 @@ SELinux %(domainname)s policy is very flexible allowing users to setup their %(d
@@ -24,5 +24,5 @@ index 7d90ffb5a22f..11809dcede43 100755
  .B STANDARD FILE CONTEXT
  
 -- 
-2.39.1
+2.41.0
 

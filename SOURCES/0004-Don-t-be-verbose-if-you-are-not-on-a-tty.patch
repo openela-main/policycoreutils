@@ -1,4 +1,4 @@
-From 9e22ab3619d68277c89926f3f31e37a9101ca082 Mon Sep 17 00:00:00 2001
+From 06c0d6d8f34becde1a8b4b2532e2a22abe9d4d94 Mon Sep 17 00:00:00 2001
 From: Dan Walsh <dwalsh@redhat.com>
 Date: Fri, 14 Feb 2014 12:32:12 -0500
 Subject: [PATCH] Don't be verbose if you are not on a tty
@@ -21,5 +21,5 @@ index 166af6f360a2..ebe64563c7d7 100755
  THREADS=""
  RPMFILES=""
 -- 
-2.39.1
+2.41.0
 
