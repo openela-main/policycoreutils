@@ -12,7 +12,7 @@
 Summary: SELinux policy core utilities
 Name:    policycoreutils
 Version: 2.9
-Release: 24%{?dist}
+Release: 25%{?dist}
 License: GPLv2
 # https://github.com/SELinuxProject/selinux/wiki/Releases
 Source0: https://github.com/SELinuxProject/selinux/releases/download/20190315/policycoreutils-2.9.tar.gz
@@ -90,6 +90,8 @@ Patch0049: 0049-python-Harden-tools-against-rogue-modules.patch
 Patch0050: 0050-python-Do-not-query-the-local-database-if-the-fconte.patch
 Patch0051: 0051-python-sepolicy-add-missing-booleans-to-man-pages.patch
 Patch0052: 0052-python-sepolicy-Cache-conditional-rule-queries.patch
+Patch0053: 0053-python-Harden-more-tools-against-rogue-modules.patch
+Patch0054: 0054-sepolicy-port-to-dnf4-python-API.patch
 
 Obsoletes: policycoreutils < 2.0.61-2
 Conflicts: filesystem < 3, selinux-policy-base < 3.13.1-138
@@ -529,6 +531,10 @@ The policycoreutils-restorecond package contains the restorecond service.
 %systemd_postun_with_restart restorecond.service
 
 %changelog
+* Tue Feb 06 2024 Vit Mojzis <vmojzis@redhat.com> - 2.9-25
+- Harden more tools against "rogue" modules (RHEL-17351)
+- sepolicy: port to dnf4 python API (RHEL-17398)
+
 * Wed Feb 15 2023 Vit Mojzis <vmojzis@redhat.com> - 2.9-24
 - Update translations (#2124826)
 

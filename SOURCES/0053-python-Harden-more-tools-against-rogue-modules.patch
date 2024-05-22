@@ -1,0 +1,98 @@
+From 7aef364bc6607953a34cb9e8fe9ea51c88379a5c Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Wed, 6 Dec 2023 15:31:51 +0100
+Subject: [PATCH] python: Harden more tools against "rogue" modules
+
+Python scripts present in the same directory as the tool
+override regular modules.
+
+Fixes:
+      #cat > /usr/bin/signal.py <<EOF
+      import sys
+      print("BAD GUY!", file=sys.stderr)
+      sys.exit(1)
+      EOF
+      #sandbox date
+      BAD GUY!
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+Acked-by: James Carter <jwcart2@gmail.com>
+---
+ dbus/selinux_server.py       | 2 +-
+ gui/polgengui.py             | 2 +-
+ gui/system-config-selinux.py | 6 +++---
+ sandbox/sandbox              | 2 +-
+ sandbox/start                | 2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/dbus/selinux_server.py b/dbus/selinux_server.py
+index 97bf91ba..eae38de5 100644
+--- a/dbus/selinux_server.py
++++ b/dbus/selinux_server.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python3
++#!/usr/bin/python3 -EsI
+ 
+ import dbus
+ import dbus.service
+diff --git a/gui/polgengui.py b/gui/polgengui.py
+index 46a1bd2c..0402e82c 100644
+--- a/gui/polgengui.py
++++ b/gui/polgengui.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python3 -Es
++#!/usr/bin/python3 -EsI
+ #
+ # polgengui.py - GUI for SELinux Config tool in system-config-selinux
+ #
+diff --git a/gui/system-config-selinux.py b/gui/system-config-selinux.py
+index 1e0d5eb1..c344c076 100644
+--- a/gui/system-config-selinux.py
++++ b/gui/system-config-selinux.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python3 -Es
++#!/usr/bin/python3 -EsI
+ #
+ # system-config-selinux.py - GUI for SELinux Config tool in system-config-selinux
+ #
+@@ -32,6 +32,8 @@ except RuntimeError as e:
+     print("This is a graphical application and requires DISPLAY to be set.")
+     sys.exit(1)
+ 
++sys.path.append('/usr/share/system-config-selinux')
++
+ from gi.repository import GObject
+ import statusPage
+ import booleansPage
+@@ -65,8 +67,6 @@ except:
+ 
+ version = "1.0"
+ 
+-sys.path.append('/usr/share/system-config-selinux')
+-
+ 
+ ##
+ ## Pull in the Glade file
+diff --git a/sandbox/sandbox b/sandbox/sandbox
+index 707959a6..e276e594 100644
+--- a/sandbox/sandbox
++++ b/sandbox/sandbox
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python3 -Es
++#!/usr/bin/python3 -EsI
+ # Authors: Dan Walsh <dwalsh@redhat.com>
+ # Authors: Thomas Liu <tliu@fedoraproject.org>
+ # Authors: Josh Cogliati
+diff --git a/sandbox/start b/sandbox/start
+index 4ed3cb5c..3c1a1783 100644
+--- a/sandbox/start
++++ b/sandbox/start
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python3 -Es
++#!/usr/bin/python3 -EsI
+ try:
+     from subprocess import getstatusoutput
+ except ImportError:
+-- 
+2.43.0
+
