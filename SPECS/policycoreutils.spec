@@ -12,7 +12,7 @@
 Summary: SELinux policy core utilities
 Name:    policycoreutils
 Version: 2.9
-Release: 25%{?dist}
+Release: 26%{?dist}
 License: GPLv2
 # https://github.com/SELinuxProject/selinux/wiki/Releases
 Source0: https://github.com/SELinuxProject/selinux/releases/download/20190315/policycoreutils-2.9.tar.gz
@@ -92,6 +92,8 @@ Patch0051: 0051-python-sepolicy-add-missing-booleans-to-man-pages.patch
 Patch0052: 0052-python-sepolicy-Cache-conditional-rule-queries.patch
 Patch0053: 0053-python-Harden-more-tools-against-rogue-modules.patch
 Patch0054: 0054-sepolicy-port-to-dnf4-python-API.patch
+Patch0056: 0055-python-semanage-Do-not-sort-local-fcontext-definitio.patch
+Patch0057: 0056-python-semanage-Allow-modifying-records-on-add.patch
 
 Obsoletes: policycoreutils < 2.0.61-2
 Conflicts: filesystem < 3, selinux-policy-base < 3.13.1-138
@@ -531,6 +533,10 @@ The policycoreutils-restorecond package contains the restorecond service.
 %systemd_postun_with_restart restorecond.service
 
 %changelog
+* Wed Mar 06 2024 Vit Mojzis <vmojzis@redhat.com> - 2.9-26
+- python/semanage: Allow modifying records on "add" (RHEL-28167)
+- python/semanage: Do not sort local fcontext definitions (RHEL-24461)
+
 * Tue Feb 06 2024 Vit Mojzis <vmojzis@redhat.com> - 2.9-25
 - Harden more tools against "rogue" modules (RHEL-17351)
 - sepolicy: port to dnf4 python API (RHEL-17398)

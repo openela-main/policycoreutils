@@ -1,0 +1,64 @@
+From b6fa6e77d5d40a5c1b5f4be95500aa1a05147e5b Mon Sep 17 00:00:00 2001
+From: Vit Mojzis <vmojzis@redhat.com>
+Date: Wed, 7 Feb 2024 15:46:23 +0100
+Subject: [PATCH] python/semanage: Do not sort local fcontext definitions
+
+Entries in file_contexts.local are processed from the most recent one to
+the oldest, with first match being used. Therefore it is important to
+preserve their order when listing (semanage fcontext -lC) and exporting
+(semanage export).
+
+Signed-off-by: Vit Mojzis <vmojzis@redhat.com>
+Acked-by: James Carter <jwcart2@gmail.com>
+---
+ gui/fcontextPage.py         | 6 +++++-
+ python/semanage/seobject.py | 9 +++++++--
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/gui/fcontextPage.py b/gui/fcontextPage.py
+index e424366d..01a403a2 100644
+--- a/gui/fcontextPage.py
++++ b/gui/fcontextPage.py
+@@ -125,7 +125,11 @@ class fcontextPage(semanagePage):
+         self.fcontext = seobject.fcontextRecords()
+         self.store.clear()
+         fcon_dict = self.fcontext.get_all(self.local)
+-        for k in sorted(fcon_dict.keys()):
++        if self.local:
++            fkeys = fcon_dict.keys()
++        else:
++            fkeys = sorted(fcon_dict.keys())
++        for k in fkeys:
+             if not self.match(fcon_dict, k, filter):
+                 continue
+             iter = self.store.append()
+diff --git a/python/semanage/seobject.py b/python/semanage/seobject.py
+index 0e923a0d..dd915a69 100644
+--- a/python/semanage/seobject.py
++++ b/python/semanage/seobject.py
+@@ -2644,7 +2644,7 @@ class fcontextRecords(semanageRecords):
+     def customized(self):
+         l = []
+         fcon_dict = self.get_all(True)
+-        for k in sorted(fcon_dict.keys()):
++        for k in fcon_dict.keys():
+             if fcon_dict[k]:
+                 if fcon_dict[k][3]:
+                     l.append("-a -f %s -t %s -r '%s' '%s'" % (file_type_str_to_option[k[1]], fcon_dict[k][2], fcon_dict[k][3], k[0]))
+@@ -2661,7 +2661,12 @@ class fcontextRecords(semanageRecords):
+         if len(fcon_dict) != 0:
+             if heading:
+                 print("%-50s %-18s %s\n" % (_("SELinux fcontext"), _("type"), _("Context")))
+-            for k in sorted(fcon_dict.keys()):
++            # do not sort local customizations since they are evaluated based on the order they where added in
++            if locallist:
++                fkeys = fcon_dict.keys()
++            else:
++                fkeys = sorted(fcon_dict.keys())
++            for k in fkeys:
+                 if fcon_dict[k]:
+                     if is_mls_enabled:
+                         print("%-50s %-18s %s:%s:%s:%s " % (k[0], k[1], fcon_dict[k][0], fcon_dict[k][1], fcon_dict[k][2], translate(fcon_dict[k][3], False)))
+-- 
+2.43.0
+
