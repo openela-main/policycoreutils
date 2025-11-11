@@ -1,0 +1,49 @@
+From 98fd27a995442f413ea606619bca6ffa3ddbbf53 Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <lautrbach@redhat.com>
+Date: Mon, 28 Apr 2025 11:07:31 +0200
+Subject: [PATCH] restorecond: always add '\0' to ut_user
+Content-type: text/plain
+
+Fixes:
+    Error: STRING_NULL (CWE-170): [#def5]
+    selinux-3.6/restorecond/utmpwatcher.c:62: string_null_source: Function "fread" does not terminate string "u". [Note: The source code implementation of the function has been overridden by a builtin model.]
+    selinux-3.6/restorecond/utmpwatcher.c:64: string_null: Passing unterminated string "u.ut_user" to "strings_list_add", which expects a null-terminated string.
+    #   62|   	while (fread(&u, sizeof(struct utmp), 1, cfg) > 0) {
+    #   63|   		if (u.ut_type == USER_PROCESS)
+    #   64|-> 			strings_list_add(&utmp_ptr, u.ut_user);
+    #   65|   	}
+    #   66|   	fclose(cfg);
+---
+ restorecond/utmpwatcher.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/restorecond/utmpwatcher.c b/restorecond/utmpwatcher.c
+index 8660520370de..c9d666862c11 100644
+--- a/restorecond/utmpwatcher.c
++++ b/restorecond/utmpwatcher.c
+@@ -50,6 +50,8 @@ unsigned int utmpwatcher_handle(int inotify_fd, int wd)
+ 	int changed = 0;
+ 	struct utmp u;
+ 	const char *utmp_path = "/run/utmp";
++	char utmp_user[UT_NAMESIZE + 1];
++
+ 	struct stringsList *prev_utmp_ptr = utmp_ptr;
+ 	if (wd != utmp_wd)
+ 		return -1;
+@@ -60,8 +62,11 @@ unsigned int utmpwatcher_handle(int inotify_fd, int wd)
+ 		exitApp("Error reading utmp file.");
+ 
+ 	while (fread(&u, sizeof(struct utmp), 1, cfg) > 0) {
+-		if (u.ut_type == USER_PROCESS)
+-			strings_list_add(&utmp_ptr, u.ut_user);
++		if (u.ut_type == USER_PROCESS) {
++			strncpy(utmp_user, u.ut_user, UT_NAMESIZE);
++			utmp_user[UT_NAMESIZE] = '\0';
++			strings_list_add(&utmp_ptr, utmp_user);
++		}
+ 	}
+ 	fclose(cfg);
+ 	if (utmp_wd >= 0)
+-- 
+2.49.0
+

@@ -1,0 +1,78 @@
+From be02ae5d861e4a80bb80f9b1a659315efb5b2aab Mon Sep 17 00:00:00 2001
+From: Petr Lautrbach <lautrbach@redhat.com>
+Date: Thu, 6 Jun 2024 11:50:39 +0200
+Subject: [PATCH] fixfiles: drop unnecessary \ line endings
+Content-type: text/plain
+
+See https://github.com/koalaman/shellcheck/issues/2769
+
+Fixes:
+    $ shellcheck -S error fixfiles
+
+    In fixfiles line 189:
+            # These two sorts need to be separate commands \
+                                                            ^-- SC1143 (error): This backslash is part of a comment and does not continue the line.
+
+    For more information:
+      https://www.shellcheck.net/wiki/SC1143 -- This backslash is part of a comme...
+
+Signed-off-by: Petr Lautrbach <lautrbach@redhat.com>
+Acked-by: James Carter <jwcart2@gmail.com>
+---
+ policycoreutils/scripts/fixfiles | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/policycoreutils/scripts/fixfiles b/policycoreutils/scripts/fixfiles
+index ebe64563c7d7..13ac07414c14 100755
+--- a/policycoreutils/scripts/fixfiles
++++ b/policycoreutils/scripts/fixfiles
+@@ -174,10 +174,10 @@ if [ -f ${PREFC} -a -x /usr/bin/diff ]; then
+ 	test -z "$TEMPFILE" && exit
+ 	PREFCTEMPFILE=`mktemp ${PREFC}.XXXXXXXXXX`
+ 	sed -r -e 's,:s0, ,g' $PREFC | sort -u > ${PREFCTEMPFILE}
+-	sed -r -e 's,:s0, ,g' $FC | sort -u | \
+-	/usr/bin/diff -b ${PREFCTEMPFILE} - | \
+-	    grep '^[<>]'|cut -c3-| grep ^/ | \
+-	    grep -Ev '(^/home|^/root|^/tmp)' |\
++	sed -r -e 's,:s0, ,g' $FC | sort -u |
++	/usr/bin/diff -b ${PREFCTEMPFILE} - |
++	    grep '^[<>]'|cut -c3-| grep ^/ |
++	    grep -Ev '(^/home|^/root|^/tmp)' |
+ 	sed -r -e 's,[[:blank:]].*,,g' \
+ 	       -e 's|\(([/[:alnum:]]+)\)\?|{\1,}|g' \
+ 	       -e 's|([/[:alnum:]])\?|{\1,}|g' \
+@@ -186,19 +186,19 @@ if [ -f ${PREFC} -a -x /usr/bin/diff ]; then
+ 	       -e 's|\(.*|*|g' \
+ 	       -e 's|\[.*|*|g' \
+ 	       -e 's|\.\*.*|*|g' \
+-	       -e 's|\.\+.*|*|g' | \
+-	    # These two sorts need to be separate commands \
+-	sort -u | \
+-	sort -d | \
+-	while read pattern ; \
+-	    do if ! echo "$pattern" | grep -q -f ${TEMPFILE} 2>/dev/null; then \
+-		  echo "$pattern"; \
+-		  case "$pattern" in *"*") \
++	       -e 's|\.\+.*|*|g' |
++	    # These two sorts need to be separate commands
++	sort -u |
++	sort -d |
++	while read pattern ;
++	    do if ! echo "$pattern" | grep -q -f ${TEMPFILE} 2>/dev/null; then
++		  echo "$pattern";
++		  case "$pattern" in *"*")
+ 		       echo "$pattern" | sed -e 's,^,^,' -e 's,\*$,,g' >> ${TEMPFILE};;
+-		  esac; \
+-	       fi; \
+-	    done | \
+-	${RESTORECON} ${VERBOSE} ${EXCLUDEDIRS} ${FORCEFLAG} ${THREADS} $* -i -R -f -; \
++		  esac;
++	       fi;
++	    done |
++	${RESTORECON} ${VERBOSE} ${EXCLUDEDIRS} ${FORCEFLAG} ${THREADS} $* -i -R -f -;
+ 	rm -f ${TEMPFILE} ${PREFCTEMPFILE}
+ fi
+ }
+-- 
+2.44.0
+

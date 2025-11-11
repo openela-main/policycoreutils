@@ -11,7 +11,7 @@
 Summary: SELinux policy core utilities
 Name:    policycoreutils
 Version: 3.6
-Release: 2.1%{?dist}
+Release: 3%{?dist}
 License: GPL-2.0-or-later
 # https://github.com/SELinuxProject/selinux/wiki/Releases
 Source0: https://github.com/SELinuxProject/selinux/releases/download/3.6/selinux-3.6.tar.gz
@@ -55,6 +55,8 @@ Patch0016: 0016-Revert-policycoreutils-Remove-the-Russian-translatio.patch
 Patch0017: 0017-Revert-gui-Remove-the-Russian-translations.patch
 Patch0018: 0018-python-semanage-Allow-modifying-records-on-add.patch
 Patch0019: 0019-python-semanage-Do-not-sort-local-fcontext-definitio.patch
+Patch0020: 0020-fixfiles-drop-unnecessary-line-endings.patch
+Patch0021: 0021-restorecond-always-add-0-to-ut_user.patch
 # Patch list end
 Obsoletes: policycoreutils < 2.0.61-2
 Conflicts: filesystem < 3, selinux-policy-base < 3.13.1-138
@@ -464,6 +466,9 @@ The policycoreutils-restorecond package contains the restorecond service.
 %systemd_postun_with_restart restorecond.service
 
 %changelog
+* Mon Apr 28 2025 Petr Lautrbach <lautrbach@redhat.com> - 3.6-3
+- restorecond: always add '\0' to ut_user
+
 * Mon Feb 19 2024 Petr Lautrbach <lautrbach@redhat.com> - 3.6-2.1
 - semanage: Allow modifying records on "add"
 - semanage: Do not sort local fcontext definitions
