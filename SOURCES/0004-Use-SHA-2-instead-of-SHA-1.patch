@@ -1,8 +1,7 @@
-From 4780b755bb1171f5aa4cd7545535839d451a2070 Mon Sep 17 00:00:00 2001
+From 1a3fc195c6dc7fe51ef76e4484910f7b41161ccc Mon Sep 17 00:00:00 2001
 From: Petr Lautrbach <plautrba@redhat.com>
 Date: Fri, 30 Jul 2021 14:14:37 +0200
 Subject: [PATCH] Use SHA-2 instead of SHA-1
-Content-type: text/plain
 
 The use of SHA-1 in RHEL9 is deprecated
 ---
@@ -13,10 +12,10 @@ The use of SHA-1 in RHEL9 is deprecated
  4 files changed, 20 insertions(+), 20 deletions(-)
 
 diff --git a/policycoreutils/setfiles/restorecon.8 b/policycoreutils/setfiles/restorecon.8
-index c3cc5c9b0e52..6160aced5922 100644
+index 1134420e..77dd0542 100644
 --- a/policycoreutils/setfiles/restorecon.8
 +++ b/policycoreutils/setfiles/restorecon.8
-@@ -95,14 +95,14 @@ display usage information and exit.
+@@ -103,14 +103,14 @@ display usage information and exit.
  ignore files that do not exist.
  .TP
  .B \-I
@@ -34,7 +33,7 @@ index c3cc5c9b0e52..6160aced5922 100644
  enable usage of the
  .IR security.sehash
  extended attribute.
-@@ -200,7 +200,7 @@ the
+@@ -208,7 +208,7 @@ the
  .B \-D
  option to
  .B restorecon
@@ -43,7 +42,7 @@ index c3cc5c9b0e52..6160aced5922 100644
  attribute named
  .IR security.sehash
  on each directory specified in
-@@ -217,7 +217,7 @@ for further details.
+@@ -225,7 +225,7 @@ for further details.
  .sp
  The
  .B \-I
@@ -53,7 +52,7 @@ index c3cc5c9b0e52..6160aced5922 100644
  and provided the
  .B \-n
 diff --git a/policycoreutils/setfiles/restorecon_xattr.8 b/policycoreutils/setfiles/restorecon_xattr.8
-index 51d12a4dbb80..09bfd8c40ab4 100644
+index 51d12a4d..09bfd8c4 100644
 --- a/policycoreutils/setfiles/restorecon_xattr.8
 +++ b/policycoreutils/setfiles/restorecon_xattr.8
 @@ -23,7 +23,7 @@ or
@@ -90,7 +89,7 @@ index 51d12a4dbb80..09bfd8c40ab4 100644
  .I security.sehash
  directory digest entries, and is shown for reference only).
 diff --git a/policycoreutils/setfiles/restorecon_xattr.c b/policycoreutils/setfiles/restorecon_xattr.c
-index 31fb82fd2099..bc22d3fd4560 100644
+index 31fb82fd..bc22d3fd 100644
 --- a/policycoreutils/setfiles/restorecon_xattr.c
 +++ b/policycoreutils/setfiles/restorecon_xattr.c
 @@ -38,7 +38,7 @@ int main(int argc, char **argv)
@@ -134,10 +133,10 @@ index 31fb82fd2099..bc22d3fd4560 100644
  	}
  
 diff --git a/policycoreutils/setfiles/setfiles.8 b/policycoreutils/setfiles/setfiles.8
-index ee01725050bb..57c663a99d67 100644
+index eabf0a1c..187f4513 100644
 --- a/policycoreutils/setfiles/setfiles.8
 +++ b/policycoreutils/setfiles/setfiles.8
-@@ -95,14 +95,14 @@ display usage information and exit.
+@@ -104,14 +104,14 @@ display usage information and exit.
  ignore files that do not exist.
  .TP
  .B \-I
@@ -155,7 +154,7 @@ index ee01725050bb..57c663a99d67 100644
  enable usage of the
  .IR security.sehash
  extended attribute.
-@@ -261,7 +261,7 @@ the
+@@ -270,7 +270,7 @@ the
  .B \-D
  option to
  .B setfiles
@@ -164,7 +163,7 @@ index ee01725050bb..57c663a99d67 100644
  .B spec_file
  set in an extended attribute named
  .IR security.sehash
-@@ -282,7 +282,7 @@ for further details.
+@@ -291,7 +291,7 @@ for further details.
  .sp
  The
  .B \-I
@@ -174,5 +173,5 @@ index ee01725050bb..57c663a99d67 100644
  and provided the
  .B \-n
 -- 
-2.47.0
+2.49.0
 

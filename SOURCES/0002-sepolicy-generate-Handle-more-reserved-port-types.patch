@@ -1,8 +1,7 @@
-From fb7357cd097801fcdfa21ed49a17a3875db05e42 Mon Sep 17 00:00:00 2001
+From 618ae48ebf1334f9380a9ae7460c553515f9c4ca Mon Sep 17 00:00:00 2001
 From: Masatake YAMATO <yamato@redhat.com>
 Date: Thu, 14 Dec 2017 15:57:58 +0900
 Subject: [PATCH] sepolicy-generate: Handle more reserved port types
-Content-type: text/plain
 
 Currently only reserved_port_t, port_t and hi_reserved_port_t are
 handled as special when making a ports-dictionary.  However, as fas as
@@ -53,7 +52,7 @@ https://lore.kernel.org/selinux/20150610.190635.1866127952891120915.yamato@redha
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/python/sepolicy/sepolicy/generate.py b/python/sepolicy/sepolicy/generate.py
-index adf65f27a822..f726ad51b775 100644
+index adf65f27..f726ad51 100644
 --- a/python/sepolicy/sepolicy/generate.py
 +++ b/python/sepolicy/sepolicy/generate.py
 @@ -100,7 +100,9 @@ def get_all_ports():
@@ -68,5 +67,5 @@ index adf65f27a822..f726ad51b775 100644
          dict[(p['low'], p['high'], p['protocol'])] = (p['type'], p.get('range'))
      return dict
 -- 
-2.47.0
+2.49.0
 

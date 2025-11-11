@@ -1,8 +1,7 @@
-From f2092a1b859a028f2c5c79b41c70b135ba3ad0fa Mon Sep 17 00:00:00 2001
+From 16fd581da479f80b8f8ff8ae8ff58a4f0a610d54 Mon Sep 17 00:00:00 2001
 From: Petr Lautrbach <plautrba@redhat.com>
 Date: Wed, 18 Jul 2018 09:09:35 +0200
 Subject: [PATCH] sandbox: Use matchbox-window-manager instead of openbox
-Content-type: text/plain
 
 ---
  sandbox/sandbox     |  4 ++--
@@ -11,7 +10,7 @@ Content-type: text/plain
  3 files changed, 3 insertions(+), 17 deletions(-)
 
 diff --git a/sandbox/sandbox b/sandbox/sandbox
-index e3fd6119ed4d..e01425f0c637 100644
+index e3fd6119..e01425f0 100644
 --- a/sandbox/sandbox
 +++ b/sandbox/sandbox
 @@ -270,7 +270,7 @@ class Sandbox:
@@ -33,7 +32,7 @@ index e3fd6119ed4d..e01425f0c637 100644
  
          parser.add_option("-l", "--level", dest="level",
 diff --git a/sandbox/sandbox.8 b/sandbox/sandbox.8
-index 095b9e27042d..1c1870190e51 100644
+index 095b9e27..1c187019 100644
 --- a/sandbox/sandbox.8
 +++ b/sandbox/sandbox.8
 @@ -80,7 +80,7 @@ Specifies the windowsize when creating an X based Sandbox. The default windowsiz
@@ -46,7 +45,7 @@ index 095b9e27042d..1c1870190e51 100644
  \fB\-X\fR
  Create an X based Sandbox for gui apps, temporary files for
 diff --git a/sandbox/sandboxX.sh b/sandbox/sandboxX.sh
-index 28169182ce42..e2a7ad9b2ac7 100644
+index 28169182..e2a7ad9b 100644
 --- a/sandbox/sandboxX.sh
 +++ b/sandbox/sandboxX.sh
 @@ -7,20 +7,6 @@ export TITLE="Sandbox $context -- `grep ^#TITLE: ~/.sandboxrc | /usr/bin/cut -b8
@@ -71,5 +70,5 @@ index 28169182ce42..e2a7ad9b2ac7 100644
      if [ -z "$WAYLAND_DISPLAY" ]; then
          DISPLAY_COMMAND='/usr/bin/Xephyr -resizeable -title "$TITLE" -terminate -screen $SCREENSIZE -dpi $DPI -nolisten tcp -displayfd 5 5>&1 2>/dev/null'
 -- 
-2.47.0
+2.49.0
 

@@ -30,8 +30,9 @@ efi_set_boot_next() {
 }
 
 relabel_selinux() {
-    # if /sbin/init is not labeled correctly this process is running in the
-    # wrong context, so a reboot will be required after relabel
+    # Switch SELinux to permissive mode, fix labeling issues (or execute shell
+    # and have the user fix them) and reboot the machine so that the correct
+    # labels are applied to all services.
     AUTORELABEL=
     . /etc/selinux/config
     echo "0" > /sys/fs/selinux/enforce
