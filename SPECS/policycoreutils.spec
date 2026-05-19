@@ -11,7 +11,7 @@
 Summary: SELinux policy core utilities
 Name:    policycoreutils
 Version: 3.6
-Release: 3%{?dist}
+Release: 5%{?dist}
 License: GPL-2.0-or-later
 # https://github.com/SELinuxProject/selinux/wiki/Releases
 Source0: https://github.com/SELinuxProject/selinux/releases/download/3.6/selinux-3.6.tar.gz
@@ -57,6 +57,10 @@ Patch0018: 0018-python-semanage-Allow-modifying-records-on-add.patch
 Patch0019: 0019-python-semanage-Do-not-sort-local-fcontext-definitio.patch
 Patch0020: 0020-fixfiles-drop-unnecessary-line-endings.patch
 Patch0021: 0021-restorecond-always-add-0-to-ut_user.patch
+Patch0022: 0022-semanage-Reset-active-value-when-deleting-boolean-cu.patch
+Patch0023: 0023-seunshare-always-use-translations-when-printing.patch
+Patch0024: 0024-seunshare-fix-the-frail-tmpdir-cleanup.patch
+Patch0025: 0025-sandbox-seunshare-Replace-system-with-execv-to-preve.patch
 # Patch list end
 Obsoletes: policycoreutils < 2.0.61-2
 Conflicts: filesystem < 3, selinux-policy-base < 3.13.1-138
@@ -466,6 +470,13 @@ The policycoreutils-restorecond package contains the restorecond service.
 %systemd_postun_with_restart restorecond.service
 
 %changelog
+* Tue Feb 03 2026 Petr Lautrbach <lautrbach@redhat.com> - 3.6-5
+- sandbox/seunshare: Replace system() with execv() to prevent shell injection
+- seunshare: fix the frail tmpdir cleanup
+
+* Thu Jan 15 2026 Veronika Syncakova <vsyncako@redhat.com> - 3.6-4
+- semanage: Reset active value when deleting boolean customizations
+
 * Mon Apr 28 2025 Petr Lautrbach <lautrbach@redhat.com> - 3.6-3
 - restorecond: always add '\0' to ut_user
 

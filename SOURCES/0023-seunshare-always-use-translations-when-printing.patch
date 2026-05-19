@@ -1,0 +1,79 @@
+From fe5706639f4a4c8e331274ad47cf0c5a36371f76 Mon Sep 17 00:00:00 2001
+From: Rahul Sandhu <nvraxn@gmail.com>
+Date: Thu, 31 Jul 2025 18:17:06 +0100
+Subject: [PATCH] seunshare: always use translations when printing
+Content-type: text/plain
+
+Some errors previously were not using gettext for translations, hence
+wrap them with the _ macro.
+
+Signed-off-by: Rahul Sandhu <nvraxn@gmail.com>
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+---
+ sandbox/seunshare.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/sandbox/seunshare.c b/sandbox/seunshare.c
+index 1d38ea92b9ae..9bce167aeac7 100644
+--- a/sandbox/seunshare.c
++++ b/sandbox/seunshare.c
+@@ -102,7 +102,7 @@ static int set_signal_handles(void)
+ 
+ 	/* Empty the signal mask in case someone is blocking a signal */
+ 	if (sigemptyset(&empty)) {
+-		fprintf(stderr, "Unable to obtain empty signal set\n");
++		fprintf(stderr, _("Unable to obtain empty signal set\n"));
+ 		return -1;
+ 	}
+ 
+@@ -110,12 +110,12 @@ static int set_signal_handles(void)
+ 
+ 	/* Terminate on SIGHUP */
+ 	if (signal(SIGHUP, SIG_DFL) == SIG_ERR) {
+-		perror("Unable to set SIGHUP handler");
++		perror(_("Unable to set SIGHUP handler"));
+ 		return -1;
+ 	}
+ 
+ 	if (signal(SIGINT, handler) == SIG_ERR) {
+-		perror("Unable to set SIGINT handler");
++		perror(_("Unable to set SIGINT handler"));
+ 		return -1;
+ 	}
+ 
+@@ -323,7 +323,7 @@ static int rsynccmd(const char * src, const char *dst, char **cmdbuf)
+ 
+ 	/* match glob for all files in src dir */
+ 	if (asprintf(&buf, "%s/*", src) == -1) {
+-		fprintf(stderr, "Out of memory\n");
++		fprintf(stderr, _("Out of memory\n"));
+ 		return -1;
+ 	}
+ 
+@@ -341,12 +341,12 @@ static int rsynccmd(const char * src, const char *dst, char **cmdbuf)
+ 
+ 		if (!buf) {
+ 			if (asprintf(&newbuf, "\'%s\'", path) == -1) {
+-				fprintf(stderr, "Out of memory\n");
++				fprintf(stderr, _("Out of memory\n"));
+ 				goto err;
+ 			}
+ 		} else {
+ 			if (asprintf(&newbuf, "%s  \'%s\'", buf, path) == -1) {
+-				fprintf(stderr, "Out of memory\n");
++				fprintf(stderr, _("Out of memory\n"));
+ 				goto err;
+ 			}
+ 		}
+@@ -357,7 +357,7 @@ static int rsynccmd(const char * src, const char *dst, char **cmdbuf)
+ 
+ 	if (buf) {
+ 		if (asprintf(&newbuf, "/usr/bin/rsync -trlHDq %s '%s'", buf, dst) == -1) {
+-			fprintf(stderr, "Out of memory\n");
++			fprintf(stderr, _("Out of memory\n"));
+ 			goto err;
+ 		}
+ 		*cmdbuf=newbuf;
+-- 
+2.52.0
+
