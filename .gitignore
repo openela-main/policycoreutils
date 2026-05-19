@@ -1,4 +1,4 @@
-SOURCES/selinux-3.9.tar.gz.asc
-SOURCES/selinux-autorelabel.target
 SOURCES/selinux-python.zip
-SOURCES/selinux-3.9.tar.gz
+SOURCES/selinux-3.10.tar.gz
+SOURCES/selinux-3.10.tar.gz.asc
+SOURCES/selinux-autorelabel.target

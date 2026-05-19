@@ -1,4 +1,4 @@
-From 84b051139ab536519cc8e9c333483475d830d40b Mon Sep 17 00:00:00 2001
+From 4d7b6cd22b09eec515e73bc26a640d888a222a9c Mon Sep 17 00:00:00 2001
 From: Vit Mojzis <vmojzis@redhat.com>
 Date: Tue, 30 May 2023 09:07:28 +0200
 Subject: [PATCH] python/sepolicy: Fix spec file dependencies
@@ -43,5 +43,5 @@ index 433c298a..a6d4508b 100644
  
  mid_section="""\
 -- 
-2.49.0
+2.52.0
 

@@ -1,4 +1,4 @@
-From 1a3fc195c6dc7fe51ef76e4484910f7b41161ccc Mon Sep 17 00:00:00 2001
+From 74f566f16de93662e022d37d616a2f5f47f27f45 Mon Sep 17 00:00:00 2001
 From: Petr Lautrbach <plautrba@redhat.com>
 Date: Fri, 30 Jul 2021 14:14:37 +0200
 Subject: [PATCH] Use SHA-2 instead of SHA-1
@@ -12,7 +12,7 @@ The use of SHA-1 in RHEL9 is deprecated
  4 files changed, 20 insertions(+), 20 deletions(-)
 
 diff --git a/policycoreutils/setfiles/restorecon.8 b/policycoreutils/setfiles/restorecon.8
-index 1134420e..77dd0542 100644
+index b7ff9715..66b9c800 100644
 --- a/policycoreutils/setfiles/restorecon.8
 +++ b/policycoreutils/setfiles/restorecon.8
 @@ -103,14 +103,14 @@ display usage information and exit.
@@ -33,7 +33,7 @@ index 1134420e..77dd0542 100644
  enable usage of the
  .IR security.sehash
  extended attribute.
-@@ -208,7 +208,7 @@ the
+@@ -211,7 +211,7 @@ the
  .B \-D
  option to
  .B restorecon
@@ -42,7 +42,7 @@ index 1134420e..77dd0542 100644
  attribute named
  .IR security.sehash
  on each directory specified in
-@@ -225,7 +225,7 @@ for further details.
+@@ -228,7 +228,7 @@ for further details.
  .sp
  The
  .B \-I
@@ -133,10 +133,10 @@ index 31fb82fd..bc22d3fd 100644
  	}
  
 diff --git a/policycoreutils/setfiles/setfiles.8 b/policycoreutils/setfiles/setfiles.8
-index eabf0a1c..187f4513 100644
+index d43e4ad2..458f3f9f 100644
 --- a/policycoreutils/setfiles/setfiles.8
 +++ b/policycoreutils/setfiles/setfiles.8
-@@ -104,14 +104,14 @@ display usage information and exit.
+@@ -105,14 +105,14 @@ display usage information and exit.
  ignore files that do not exist.
  .TP
  .B \-I
@@ -154,7 +154,7 @@ index eabf0a1c..187f4513 100644
  enable usage of the
  .IR security.sehash
  extended attribute.
-@@ -270,7 +270,7 @@ the
+@@ -275,7 +275,7 @@ the
  .B \-D
  option to
  .B setfiles
@@ -163,7 +163,7 @@ index eabf0a1c..187f4513 100644
  .B spec_file
  set in an extended attribute named
  .IR security.sehash
-@@ -291,7 +291,7 @@ for further details.
+@@ -296,7 +296,7 @@ for further details.
  .sp
  The
  .B \-I
@@ -173,5 +173,5 @@ index eabf0a1c..187f4513 100644
  and provided the
  .B \-n
 -- 
-2.49.0
+2.52.0
 
