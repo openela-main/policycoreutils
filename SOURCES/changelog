@@ -1,3 +1,6 @@
+* Mon May 25 2026 Petr Lautrbach <lautrbach@redhat.com> - 3.10-2
+- Several sandbox and seunshare security improvements
+
 * Fri Feb 06 2026 Vit Mojzis <vmojzis@redhat.com> - 3.10-1
 - SELinux userspace 3.10 release
 
